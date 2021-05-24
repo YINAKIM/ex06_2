@@ -45,6 +45,8 @@
             return true; //검사 통과하면 업로드 꼭 시켜주기
         }//checkExtension
 
+
+
         //업로드 버튼
         $("#uploadBtn").on("click",function(e){
             var formData = new FormData();
@@ -79,15 +81,19 @@
 
 
 
+                // ,processData : false ---> 꼭 false!!
+                // ,contentType : false ---> 꼭 false!!
             $.ajax({
                  url : "/uploadAjaxAction"
                 ,processData : false
                 ,contentType : false
                 ,data : formData
-                ,type : 'POST'
-                ,success : function(){
-                     alert("Uploaded");
-                }//success
+                    ,type : 'POST'
+                    ,dataType : 'json'
+                    ,success : function(result){
+                    console.log("------ 업로드정보 : AttachFileDTO로 보낸 JSON -------");
+                    console.log(result);
+                    }//success
             });//ajax
 
         });//uploadBtn클릭

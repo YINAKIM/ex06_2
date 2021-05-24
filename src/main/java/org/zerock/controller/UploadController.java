@@ -1,16 +1,26 @@
 package org.zerock.controller;
 
-import lombok.Data;
 import lombok.extern.log4j.Log4j;
+
+import net.coobird.thumbnailator.Thumbnailator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
+import org.zerock.domain.AttachFileDTO;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -72,13 +82,20 @@ public class UploadController {
     }
 
 
-    @PostMapping("/uploadAjaxAction")
-    public void uploadAjaxPost(MultipartFile[] uploadFile){ // Ajax방식을 사용하면 Model필요없음
+    @PostMapping(value = "/uploadAjaxAction",produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile){ // Ajax방식을 사용하면 Model필요없음
+
+        /*** 파일업로드 후 브라우저로 보내줄 정보들을 AttachFileDTO 로 묶어서 List로 보내준다 ***/
+        List<AttachFileDTO> list = new ArrayList<>();
+
+        /************** 파일업로드 작업 *********************************/
+
         log.info("============ upload ajax post ============");
         String uploadFolder = "/Users/kim-yina/Desktop/upload/tmp";
 
         // 일자 별 폴더 만들기 :
-        File uploadPath = new File(uploadFolder, getFolder());
+        String uploadFolderPath = getFolder();
+        File uploadPath = new File(uploadFolder, uploadFolderPath);
         log.info("upload path :::::::::getFolder()::::::: "+uploadPath);
 
         if(uploadPath.exists() == false){
@@ -88,6 +105,9 @@ public class UploadController {
         // 일자 별 폴더 만들기 : 끝
 
         for(MultipartFile multipartFile : uploadFile){
+
+            AttachFileDTO attachFileDTO = new AttachFileDTO();
+
             log.info("--------------------------");
             log.info("upload File Name : "+multipartFile.getOriginalFilename());
             log.info("upload File Size : "+multipartFile.getSize());
@@ -106,15 +126,47 @@ public class UploadController {
             0518.pdf 파일업로드 : b6a19adb-4cf7-48b1-8a9d-9f835ba5789b_0518.pdf 로 업로드됨
             */
 
+/*
+try안에서 할일
+[1] 파일저장 : neww File 객체 만들어서 transferTo()
+[2] 이미지인지 if체크 : checkImageType ----> 이미지파일일 경우 썸네일만들어서 같이 저장
+                                   ----> 일반파일이면 스킵
+[3]  공격/성능저하 방지 : 중복파일명 방지처리 or 폴더 일자별로 나눠 저장처리
+[4] 업로드 완료 후 브라우저로 보낼 정보 set하고 묶어서 보내기
+브라우저에서 콘솔에 로그로 찍은 dataType : 'json'인 AttachFileDTO
+{fileName: null, uuid: "8d684a57-9f1f-497a-86df-8611776e316c", uploadPath: "2021/05/25", image: false}
 
-            //File saveFile = new File(uploadFolder, uploadFileName);
-            File saveFile = new File(uploadPath, uploadFileName); // 일자별로 만들어지는 폴더에 저장
+*/
 
             try{
+                //File saveFile = new File(uploadFolder, uploadFileName);
+                File saveFile = new File(uploadPath, uploadFileName); // 일자별로 만들어지는 폴더에 저장
                 multipartFile.transferTo(saveFile);
-               log.info("transferTo------");
+                log.info("transferTo------");
+
+                attachFileDTO.setUuid(uuid.toString());
+                attachFileDTO.setUploadPath(uploadFolderPath);
+
+               //image파일인지 체크
+                if(checkImageType(saveFile)){
+                    attachFileDTO.setImage(true); //이미지파일여부 true
+                    log.info("###### image 체크 걸림 -> 썸넬생성 ######");
+
+                    FileOutputStream thumbnail
+                            = new FileOutputStream(new File(uploadPath,"s_"+uploadFileName));
+                    log.info("###### 썸넬생성 할 예정: "+thumbnail+" ######");
+
+                    Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100,100);
+                    log.info("###### 썸넬생성 후: "+thumbnail+" ######");
+                    thumbnail.close();
+
+
+                }// image file 만 썸넬 생성하는 if
+
+                /******** 작업 다끝나면 꼭 list.add ********/
+                list.add(attachFileDTO);
             }catch(Exception e){
-               log.info("catch------");
+                log.info("Ajax파일업로드 catch------");
                 e.printStackTrace();
             }//
         }//for
@@ -129,22 +181,44 @@ public class UploadController {
           2-1) 'yy/MM/dd'단위의 폴더를 생성해서 저장하는 것 -> 일별 업로드 파일들 다른폴더에 저장되도록
         */
 
-        }
-
-
-        //폴더생성할 메서드
-        public String getFolder(){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-            Date date = new Date();
-            String str = sdf.format(date);
-            return str.replace("-",File.separator);
-        }
-
-
-
-
-
+        return new ResponseEntity<>(list, HttpStatus.OK);
 
     }
+
+
+    //폴더생성할 메서드
+    public String getFolder(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date date = new Date();
+        String str = sdf.format(date);
+        return str.replace("-",File.separator);
+    }
+
+    /* 섬네일 생성
+    [1] 업로드된 파일이 이미지종류의 파일인지 확인
+    [2] 이미지 파일이면? 썸넬 생성 후 저장
+    */
+    private boolean checkImageType(File file){
+        try{
+            String contentType = Files.probeContentType(file.toPath());
+            log.info("88888888 "+contentType);
+            return contentType.startsWith("image");
+        }catch(IOException e){
+            log.info("IOException!!");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+}
 
