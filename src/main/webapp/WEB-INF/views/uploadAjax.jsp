@@ -45,6 +45,9 @@
             return true; //검사 통과하면 업로드 꼭 시켜주기
         }//checkExtension
 
+        //chap23. 브라우저에서 섬네일 처리
+        var cloneObj = $(".uploadDiv").clone();
+
 
 
         //업로드 버튼
@@ -63,7 +66,7 @@
                 //확장자, 파일사이즈 for안에서 각각 검사
                 if(!checkExtension(files[i].name, files[i].size)){
                     console.log("업로드 막았다");
-                    return false;
+
                 }
 
                 // if안걸리면 formData로 파일데이터 전송
@@ -91,8 +94,11 @@
                     ,type : 'POST'
                     ,dataType : 'json'
                     ,success : function(result){
-                    console.log("------ 업로드정보 : AttachFileDTO로 보낸 JSON -------");
-                    console.log(result);
+                        console.log("------ 업로드정보 : AttachFileDTO로 보낸 JSON -------");
+                        console.log(result);
+
+                        $(".uploadDiv").html(cloneObj.html()); //다시 업로드 할 수 있는 화면으로 보여줌
+
                     }//success
             });//ajax
 
