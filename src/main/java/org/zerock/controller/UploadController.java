@@ -1,5 +1,6 @@
 package org.zerock.controller;
 
+import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Controller
 @Log4j
@@ -73,6 +76,16 @@ public class UploadController {
         log.info("============ upload ajax post ============");
         String uploadFolder = "/Users/kim-yina/Desktop/upload/tmp";
 
+        // 일자 별 폴더 만들기 :
+        File uploadPath = new File(uploadFolder, getFolder());
+        log.info("upload path :::::::::getFolder()::::::: "+uploadPath);
+
+        if(uploadPath.exists() == false){
+            log.info("upload path ---------- false");
+            uploadPath.mkdirs(); //mkdir"s"
+        }
+        // 일자 별 폴더 만들기 : 끝
+
         for(MultipartFile multipartFile : uploadFile){
             log.info("--------------------------");
             log.info("upload File Name : "+multipartFile.getOriginalFilename());
@@ -84,7 +97,8 @@ public class UploadController {
             uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
             log.info("only file name ::: "+uploadFileName);
 
-            File saveFile = new File(uploadFolder, uploadFileName);
+            //File saveFile = new File(uploadFolder, uploadFileName);
+            File saveFile = new File(uploadPath, uploadFileName); // 일자별로 만들어지는 폴더에 저장
 
             try{
                 multipartFile.transferTo(saveFile);
@@ -93,9 +107,34 @@ public class UploadController {
                log.info("catch------");
                 e.printStackTrace();
             }//
+        }//for
+
+        /*
+        p.508)
+        1. 중복된 파일명 문제 처리()
+          1-1) 파일이름에 밀리세컨드까지 시간 붙이기
+          1-2) UUID를 이용해서 중복발생가능성이 거의 없는 문자열 붙이기
+
+        2. 한 폴더에 너무 많은 파일생성 문제 처리 (속도 저하와 개수 제한 문제 생김 방지)
+          2-1) 'yy/MM/dd'단위의 폴더를 생성해서 저장하는 것 -> 일별 업로드 파일들 다른폴더에 저장되도록
+        */
+
         }
 
 
-        }//for
+        //폴더생성할 메서드
+        public String getFolder(){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date date = new Date();
+            String str = sdf.format(date);
+            return str.replace("-",File.separator);
+        }
+
+
+
+
+
+
     }
 
