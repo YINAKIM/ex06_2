@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 @Controller
 @Log4j
@@ -96,6 +97,15 @@ public class UploadController {
             // IE는 패스가 나오니까 마지막 "\"를 기준으로 잘라낸 문자열이 실제 파일이름
             uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
             log.info("only file name ::: "+uploadFileName);
+
+            UUID uuid = UUID.randomUUID();  // 랜덤 UUID문자열 붙여서 파일명 중복방지 (파일명이 중복되면 업로드될 때 기존파일이 삭제되므로 )
+            uploadFileName = uuid.toString()+"_"+uploadFileName;
+            /*
+            랜덤 UUID
+            11_.pdf 파일 업로드 : 801f40f9-9521-4222-b948-02bd46a849a7_11_.pdf 로 업로드됨
+            0518.pdf 파일업로드 : b6a19adb-4cf7-48b1-8a9d-9f835ba5789b_0518.pdf 로 업로드됨
+            */
+
 
             //File saveFile = new File(uploadFolder, uploadFileName);
             File saveFile = new File(uploadPath, uploadFileName); // 일자별로 만들어지는 폴더에 저장
