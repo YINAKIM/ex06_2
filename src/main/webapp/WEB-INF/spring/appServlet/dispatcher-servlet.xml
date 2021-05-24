@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- DispatcherServlet Context: defines this servlet’s request-processing infrastructure -->
+    <!-- Enables the Spring MVC @Controller programming model -->
+    <annotation-driven/>
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up
+    static resources in the ${webappRoot}/resources directory -->
+    <resources mapping="/resources/**" location="/resources/"/>
+    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/views/"/>
+        <beans:property name="suffix" value=".jsp"/>
+    </beans:bean>
+
+    <!--  파일업로드를 위한 Bean등록 : 반드시 id="multipartResolver"로 정확하게 지정 -->
+    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- multipartResolver의 프로퍼티 1 :  한글파일명 인코딩   -->
+        <beans:property name="defaultEncoding" value="utf-8"/>
+
+        <!-- multipartResolver의 프로퍼티 2 :  최대 업로드 사이즈 , byte단위 value
+                                             (1024*1024*10)bytes == 104857560bytes  == 10MB  -->
+        <beans:property name="maxUploadSize" value="104857560"/>
+
+        <!-- multipartResolver의 프로퍼티 3 :  파일 하나 당 최대 업로드 사이즈, byte단위 value
+                                             (1024*1024*2)bytes == 2MB -->
+        <beans:property name="maxUploadSizePerFile" value="2097152"/>
+
+        <!-- multipartResolver의 프로퍼티 4 :  임시파일 업로드될 경로
+                                            절대경로 이용 file: 로 시작-->
+        <beans:property name="uploadTempDir" value="file:/Users/kim-yina/Desktop/upload/tmp"/>
+
+        <!-- multipartResolver의 프로퍼티 5 :  메모리상에서 유지하는 최대 크기,
+                                            이 크기 이상은 uploadTempDir로 지정한 경로에 임시파일형태로 저장
+                                            그럼 1MB이하 파일은 임시파일로 물리경로에 저장되지 않고 그이상파일만 저장됨? -->
+        <beans:property name="maxInMemorySize" value="10485756"/>
+
+    </beans:bean>
+
+
+    <!--base package명 맞추기 -->
+    <context:component-scan base-package="org.zerock.controller"/>
+
+    <!--  예외처리컴포넌트   -->
+    <!--    <context:component-scan base-package="org.zerock.exception"/>-->
+</beans:beans>

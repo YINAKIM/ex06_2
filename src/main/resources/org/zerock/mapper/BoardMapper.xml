@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/schema/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.BoardMapper">
+
+    <select id="getList" resultType="org.zerock.domain.BoardVO" fetchSize="100">
+    <![CDATA[
+        SELECT * FROM TBL_BOARD WHERE BNO < 20 ORDER BY BNO
+    ]]>
+    </select>
+<!--  일단 실행계획보는거 테스트하려고 데이터 너무 많이 넣어놔서 20개로 짤라놓음  -->
+
+    <insert id="insert">
+        INSERT INTO TBL_BOARD(
+            BNO
+            ,TITLE
+            ,CONTENT
+            ,WRITER
+        )VALUES(
+            SEQ_BOARD.NEXTVAL
+            ,#{title}
+            ,#{content}
+            ,#{writer}
+        )
+    </insert>
+
+<!--  myBatis의 @SelectKey어노테이션을 이용한 것, PK값을 미리 SQL을 통해서 처리해두고 특정이름으로 결과를 보관하는 방식  -->
+    <insert id="insertSelectKey">
+        <selectKey keyProperty="bno" order="BEFORE" resultType="LONG">
+            SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO TBL_BOARD(
+            BNO
+            ,TITLE
+            ,CONTENT
+            ,WRITER
+        )VALUES(
+            #{bno}
+            ,#{title}
+            ,#{content}
+            ,#{writer}
+        )
+    </insert>
+
+
+<!--  select, BoardVO 객체로 반환 / 파라미터 bno는 BoardMapper인터페이스에서 선언한 리턴타입에 맞추기
+
+        MyBatis는 Mapper인터페이스의 리턴타입에 맞게 결과를 처리
+        엄밀히 말하면 MyBatis는 bno라는 컬럼이 존재하면 인스턴스의 setBno()를 호출
+        (여기서 인스턴스 ==> 매퍼에 상단에 선언한 <namespace>에 정의된 BoardMapper)
+
+        MyBatis의 모든 파라미터와 리턴타입의 처리는
+        get파라미터명(), set컬럼명 의 규칙으로 호출된다.
+-->
+    <select id="read" resultType="org.zerock.domain.BoardVO">
+        SELECT * FROM TBL_BOARD WHERE BNO = #{bno}
+    </select>
+
+    <delete id="delete" >
+        delete from tbl_board where bno=#{bno}
+    </delete>
+
+    <update id="update">
+        UPDATE TBL_BOARD
+           SET TITLE = #{title}
+            ,CONTENT = #{content}
+            ,WRITER = #{writer}
+            ,UPDATEDATE = SYSDATE
+        WHERE BNO=#{bno}
+    </update>
+
+
+
+
+<!-- [chapter 15] 검색 / 페이징 한번에 처리하는 getListWithPaging : 1+2+3 다 같이 있어야함
+     1. 페이징 : hint랑 ROWNUM 사용
+     2. 검색 :  <trim> 사용
+              (검색조건을 처리하는 부분은 데이터의 개수를 처리하는 부분도 동일하게 적용되어야함)
+     3. 결과 개수 : <sql>로 include
+-->
+
+<!-- 결과 개수 <sql>로 만들어두고 <include> -->
+<sql id="criteria">
+    <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+        <foreach item="type" collection="typeArr">
+            <trim prefix="OR">
+                <choose>
+                    <when test="type == 'T'.toString()">
+                        title like '%' || #{keyword} || '%'
+                    </when>
+                    <when test="type == 'C'.toString()">
+                        content like '%' || #{keyword} || '%'
+                    </when>
+                    <when test="type == 'W'.toString()">
+                        writer like '%' || #{keyword} || '%'
+                    </when>
+                </choose>
+            </trim>
+        </foreach>
+    </trim>
+
+</sql>
+
+
+    <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
+        <![CDATA[
+            SELECT
+                ALIAS_RN
+                ,BNO
+                ,TITLE
+                ,CONTENT
+                ,WRITER
+                ,REGDATE
+                ,UPDATEDATE
+                ,REPLYCNT
+              FROM  (
+                    SELECT
+                        /*+ INDEX_DESC(TBL_BOARD PK_BOARD)*/
+                        ROWNUM ALIAS_RN
+                        ,BNO
+                        ,TITLE
+                        ,CONTENT
+                        ,WRITER
+                        ,REGDATE
+                        ,UPDATEDATE
+                        ,REPLYCNT
+                       FROM TBL_BOARD
+                      WHERE
+        ]]>
+               <include refid="criteria"></include>
+        <![CDATA[
+                      ROWNUM <= #{pageNum} * #{amount}
+                     )
+            WHERE ALIAS_RN > ( #{pageNum}-1 ) * #{amount}
+        ]]>
+    </select>
+
+    <!--  list count  -->
+    <select id="getTotal" resultType="int">
+
+        SELECT COUNT(*) FROM TBL_BOARD
+         WHERE
+                <include refid="criteria"></include>
+        <![CDATA[
+           BNO > 0
+        ]]>
+    </select>
+
+<!--[part5-20] 댓글 수 update-->
+    <update id="updateReplyCnt">
+        UPDATE TBL_BOARD
+           SET REPLYCNT = REPLYCNT + #{amount}
+         WHERE BNO = #{bno}
+    </update>
+</mapper>

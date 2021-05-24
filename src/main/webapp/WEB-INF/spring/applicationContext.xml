@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring
+       http://mybatis.org/schema/mybatis-spring-1.2.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- Root Context: defines shared resources visible to all other web components
+      Root Context : 웹서버가 각 property들을 찾을 수 있게 하는 componant-scan의 시작점 -->
+
+   <bean id="hikariConfig" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+        <property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="username" value="book_ex"/>
+        <property name="password" value="book_ex"/>
+    </bean>
+
+
+
+<!--  HikariCP configuration:dataSource테스트할 때 필요, 84p-->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <constructor-arg ref="hikariConfig"/>
+    </bean>
+
+<!--  마이바티스 sqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+<!--  트랜잭션 매니저  -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--  어노테이션기반으로 트랜잭션을 설정할 수 있도록 하는 태그-->
+    <tx:annotation-driven></tx:annotation-driven>
+
+<!--  base-package : 이 위치에 있는 어노테이션 붙은 객체들 (Bean들) 찾아라 -->
+    <mybatis-spring:scan base-package="org.zerock.mapper"/>
+
+
+
+    <context:component-scan base-package="org.zerock.controller"/>
+    <context:component-scan base-package="org.zerock.service"/>
+
+
+    <context:component-scan base-package="org.zerock.aop"/>
+    <!--AOP
+     xmlns:aop = "http://www.springframework.org/schema/aop" : beans에 다 들어가있다고함
+    -->
+    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+</beans>

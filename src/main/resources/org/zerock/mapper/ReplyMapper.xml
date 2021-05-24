@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/schema/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.ReplyMapper">
+
+    <insert id="insert">
+        INSERT INTO TBL_REPLY(
+             RNO
+            ,BNO
+            ,REPLY
+            ,REPLYER
+        )VALUES(
+             SEQ_REPLY.NEXTVAL
+            ,#{bno}
+            ,#{reply}
+            ,#{replyer}
+        )
+    </insert>
+
+    <select id="read" resultType="org.zerock.domain.ReplyVO">
+        SELECT * FROM TBL_REPLY WHERE RNO = #{rno}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM TBL_REPLY WHERE RNO = #{rno}
+    </delete>
+
+    <update id="update">
+        UPDATE TBL_REPLY SET REPLY = #{reply}, UPDATEDATE = SYSDATE
+        WHERE RNO = #{rno}
+    </update>
+
+
+<!--  @Param 이용하여 선언한 bno 파라미터 여기서 #{bno}로 매칭   -->
+<!--
+    <select id="getListWithPaging" resultType="org.zerock.domain.ReplyVO">
+        SELECT
+             RNO
+            ,BNO
+            ,REPLY
+            ,REPLYER
+            ,REPLYDATE
+            ,UPDATEDATE
+        FROM TBL_REPLY
+        WHERE BNO = #{bno}
+        ORDER BY RNO ASC
+    </select>
+-->
+
+<!-- 댓글 페이징 : reply_paging.sql참고-->
+
+    <select id="getListWithPaging" resultType="org.zerock.domain.ReplyVO">
+
+    <![CDATA[
+        SELECT RN,RNO,BNO,REPLY,REPLYER,REPLYDATE,UPDATEDATE
+          FROM(
+            SELECT /*+ INDEX(TBL_REPLY IDX_REPLY)*/
+            ROWNUM RN
+            ,BNO,RNO,REPLY,REPLYER,REPLYDATE,UPDATEDATE
+            FROM TBL_REPLY
+            WHERE BNO = #{bno}
+                AND RNO > 0
+                AND ROWNUM <= #{cri.pageNum} * #{cri.amount}
+            )
+        WHERE RN > ( #{cri.pageNum}-1 )* #{cri.amount}
+    ]]>
+    </select>
+
+
+<!-- 댓글 수 처리 -->
+    <select id="getCountByBno" resultType="int">
+<![CDATA[
+    SELECT COUNT(RNO)
+      FROM TBL_REPLY
+     WHERE BNO = #{bno}
+]]>
+    </select>
+</mapper>
