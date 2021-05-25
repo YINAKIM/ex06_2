@@ -3,19 +3,23 @@ package org.zerock.controller;
 import lombok.extern.log4j.Log4j;
 
 import net.coobird.thumbnailator.Thumbnailator;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.domain.AttachFileDTO;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +30,11 @@ import java.util.UUID;
 @Controller
 @Log4j
 public class UploadController {
+    /*
+    귀차나서 써놓는다 파일저장경로
+    /Users/kim-yina/Desktop/upload/tmp
+    */
+
     @GetMapping("/uploadForm")
     public void uploadForm(){
         log.info("upload form----------------------");
@@ -115,8 +124,10 @@ public class UploadController {
             String uploadFileName = multipartFile.getOriginalFilename();
 
             // IE는 패스가 나오니까 마지막 "\"를 기준으로 잘라낸 문자열이 실제 파일이름
-            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
+            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("//")+1); //  슬래시 역슬래시 둘다먹음,,,,뭐?
             log.info("only file name ::: "+uploadFileName);
+            attachFileDTO.setFileName(uploadFileName);
+
 
             UUID uuid = UUID.randomUUID();  // 랜덤 UUID문자열 붙여서 파일명 중복방지 (파일명이 중복되면 업로드될 때 기존파일이 삭제되므로 )
             uploadFileName = uuid.toString()+"_"+uploadFileName;
@@ -143,6 +154,7 @@ try안에서 할일
                 File saveFile = new File(uploadPath, uploadFileName); // 일자별로 만들어지는 폴더에 저장
                 multipartFile.transferTo(saveFile);
                 log.info("transferTo------");
+
 
                 attachFileDTO.setUuid(uuid.toString());
                 attachFileDTO.setUploadPath(uploadFolderPath);
@@ -213,9 +225,56 @@ try안에서 할일
     }
 
 
+// 썸네일이미지 만들어서 보여주기
+    @ResponseBody
+    @GetMapping("/display")
+    public ResponseEntity<byte[]> getFile(String fileName){
+
+        log.info("썸넬만들 fileName"+fileName);
+
+        File file = new File("/Users/kim-yina/Desktop/upload/tmp/"+fileName); // new File객체 (지금 업로드된 파일명 가져와서) 생성
+//        File file = new File("/Users/kim-yina/Desktop/upload/tmp"+fileName); // new File객체 (지금 업로드된 파일명 가져와서) 생성
+        log.info("업로드 경로에서 이미지파일 잘가져왔나 확인----->"+file);
+
+        ResponseEntity<byte[]> result = null;
+
+        try{
+
+            HttpHeaders header = new HttpHeaders();           // java.net.http.HttpHeaders(X) org.springframework.http.HttpHeaders(O)
+
+            header.add("Content-Type",Files.probeContentType(file.toPath()));
+
+            // 결과에 담아
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+
+        }catch(IOException e){
+            log.info("썸넬만들다가 IOException");
+            e.printStackTrace();
+        }
 
 
+        return result;
+    }
 
+/*
+/display
+getFile() 테스트
+
+[png테스트 : 이미지잘나옴 ]
+http://localhost:8001/display?fileName=2021/05/25/ptest1.png
+INFO : org.zerock.controller.UploadController - 썸넬만들 fileName2021/05/25/ptest1.png
+INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지파일 잘가져왔나 확인----->/Users/kim-yina/Desktop/upload/tmp/2021/05/25/ptest1.png
+
+[jpg테스트 : 이미지잘나옴 ]
+http://localhost:8001/display?fileName=2021/05/25/jtest1.jpg
+INFO : org.zerock.controller.UploadController - 썸넬만들 fileName2021/05/25/jtest1.jpg
+INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지파일 잘가져왔나 확인----->/Users/kim-yina/Desktop/upload/tmp/2021/05/25/jtest1.jpg
+
+근데 Header 보고싶은데 브라우저 네트워크에 아무것도 안나와서 안보임 ..
+[주의]
+ File file = new File("/Users/kim-yina/Desktop/upload/tmp/"+fileName);
+                                  ---> 여기서 "/경로/경로/경로/" 경로 맨뒤에 / 꼭 붙여야됨, 안붙이면 폴더이름 그대로 이어짐
+*/
 
 
 

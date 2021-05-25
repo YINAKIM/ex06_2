@@ -9,6 +9,30 @@
 <html>
 <head>
     <title>Title</title>
+
+    <style type="text/css">
+        .uploadResult {
+            width:100%;
+            background-color: gray;
+        }
+
+        .uploadResult ul {
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .uploadResult ul li{
+            list-style: none;
+            padding: 10px;
+        }
+
+        .uploadResult ul li img{
+            width: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Upload with Ajax</h1>
@@ -17,6 +41,14 @@
         <input type="file" name="uploadFile" multiple>
     </div>
 
+
+<%--  업로드한 파일 이름 또는 썸넬출력  --%>
+    <div class="uploadResult">
+        <ul>
+        <%-- 여기다 출력할꺼야
+        multiple이니까 첨부파일 목록이 li로 들어갈 수 있게 ul에 넣는다--%>
+        </ul>
+    </div>
     <button id="uploadBtn">Upload</button>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -30,7 +62,7 @@
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)"); // 특정 확장자 지정해서 제한 : exe,sh,zip,alz 업로드막기
         var maxSize = 524880;   // 5MB이상 업로드막기
 
-        // 업로드요청 들어오면 for안에서 확장자, 파일크기 검사하는 함수
+        //chpter22. 업로드요청 들어오면 for안에서 확장자, 파일크기 검사하는 함수
         function checkExtension(fileName, fileSize){
 
             if(regex.test(fileName)){
@@ -49,6 +81,28 @@
         var cloneObj = $(".uploadDiv").clone();
 
 
+        //[chap23] 업로드결과를 파일명 or 썸넬로 출력하는 함수
+        //          : JSON데이터를 받아서 해당파일의 이름을 추가한다. <------이걸 하려면 JSON데이터가 들어가게 ajax에서 함수호출하면서 result넣어주기
+        var uploadResult = $(".uploadResult ul");
+
+        function showUploadedFile(uploadResultArr){
+
+            var str = "";
+            $(uploadResultArr).each(function(i, obj){
+                if(!obj.image){
+
+                    str += "<li><img src='/resources/img/attach.png'>"+obj.fileName+"</li>";
+                }else{
+                    str += "<li>"+obj.fileName+"</li>";
+
+                }
+                //파일명 null..........
+
+            }); //each
+
+            uploadResult.append(str);
+
+        }//showUploadedFile
 
         //업로드 버튼
         $("#uploadBtn").on("click",function(e){
@@ -84,6 +138,8 @@
 
 
 
+
+
                 // ,processData : false ---> 꼭 false!!
                 // ,contentType : false ---> 꼭 false!!
             $.ajax({
@@ -97,12 +153,18 @@
                         console.log("------ 업로드정보 : AttachFileDTO로 보낸 JSON -------");
                         console.log(result);
 
+                        //JSON데이터를 받아서 파일명을 보여주는 함수, result를 넣어서 호출
+                        showUploadedFile(result);
+
                         $(".uploadDiv").html(cloneObj.html()); //다시 업로드 할 수 있는 화면으로 보여줌
 
                     }//success
             });//ajax
 
         });//uploadBtn클릭
+
+
+
 
     });//ready
     </script>
