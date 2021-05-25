@@ -118,6 +118,8 @@
             },1000);
         });
 
+
+
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)"); // 특정 확장자 지정해서 제한 : exe,sh,zip,alz 업로드막기
         var maxSize = 524880;   // 5MB이상 업로드막기
 
@@ -151,16 +153,45 @@
                 if(!obj.image){
 
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
-
-
-
                     console.log("일반파일 다운로드 경로+이름"+fileCallPath);
                     console.log("-------");
-                    str += "<li><a href='/download?fileName="
+
+/******************************************
+[ 첨부파일 삭제 시 고려사항 ]
+--- 삭제버튼 있어야되고 ---
+1. 이미지파일 -> 원본삭제시 썸넬도 삭제
+2. 파일삭제 후 브라우저에서 : 아이콘or썸넬 도 삭제되도록
+3. 비정상적인 브라우저 종료 시 업로드된 파일 처리 문제
+*******************************************/
+//     정규표현식 new RegExp(/\\/g)
+//     /  /g ====>  new RegExp(/여기있는 문자를/g) 문자열 전체를 검색해라
+
+/*
+data() 함수 사용
+jQuery에서도 HTML5 표준에 맞춰 data-xxx 속성을 쉽게 다룰 수 있도록 data(key, value) 함수를 지원
+data() 함수는 key와 value 형식으로 파라미터를 넘겨 사용합니다.
+--------------------------------
+$('span').data('age', 13); //값 저장
+
+<span data-age="13"/>  // 이렇게 쓴다
+--------------------------------
+
+JSON 객체를 통째로 저장하고 가져올 수 있습니다.
+$('span').data('foo', {age:13, name: 'kim'}); //저장
+$('span').data('foo'); //---> JSON 객체 리턴 {age:13, name: 'kim'}
+
+다음과 같이 JSON 문자열이 저장됩니다.
+<span data-foo='{"age":"13", "name":"kim"}' />
+*/
+
+                    var fileLink = fileCallPath.replace(new RegExp(/\\/g),"/");
+
+                    str += "<li><div><a href='/download?fileName="
                         + fileCallPath
                         + "'><img src='/resources/img/attach.png'>"
-                        + obj.fileName
-                        +"</a></li>";
+                        + obj.fileName+"</a>"
+                        + "<span data-file=\'"+ fileCallPath +"\' data-type='file'> X </span>"
+                        + "</div></li>";
                     //attach.png 파일 클릭하면 ----> 다운로드에 필요한 경로 + UUID 붙은 파일명 이용해서 다운로드 가능하도록 만들기
                 }else{
 
@@ -171,7 +202,10 @@
                     originPath = originPath.replace(new RegExp(/\\/g),"/");
                     /**************** 썸넬클릭하면 원본보여주기 ***************/
 
-                    str += "<li><a href=\"javascript:showImage(\'"+originPath+"\')  \"><img src='/display?fileName=" + fileCallPath + "'>"+obj.fileName+"</li>";
+                    str += "<li><a href=\"javascript:showImage(\'"+originPath+"\')\"><img src='/display?fileName="
+                        + fileCallPath + "'></a>"
+                        + "<span data-file=\'"+ fileCallPath +"\' data-type='image'> X </span>"
+                        + "</li>";
                     /*
                     이미지파일을 업로드하면 해당 파일의 썸넬이 옆에 보임
                     */
@@ -217,10 +251,6 @@
                                          나머지 if 안타고 업로드 막음 (return false)
             */
 
-
-
-
-
                 // ,processData : false ---> 꼭 false!!
                 // ,contentType : false ---> 꼭 false!!
             $.ajax({
@@ -245,6 +275,26 @@
         });//uploadBtn클릭
 
 
+
+        //첨부파일삭제 - X 에대한 이벤트처리
+        $(".uploadResult").on("click","span",function(e){
+            var targetFile = $(this).data("file");
+            var type = $(this).data("type");
+            console.log(targetFile);
+
+            $.ajax({
+                url : '/deleteFile'
+                ,data : {
+                    fileName: targetFile, type:type
+                }
+                ,dataType : 'text'
+                ,type : 'POST'
+                ,success : function (result) {
+                    alert(result)
+                }//success
+            });// delete ajax
+
+        });
 
 
     });//ready

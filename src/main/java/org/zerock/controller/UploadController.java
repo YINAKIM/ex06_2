@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class UploadController {
     /*
     귀차나서 써놓는다 파일저장경로
-    /Users/kim-yina/Desktop/upload/tmp
+    /Users/kim-yina/Desktop/upload/tmp/
     */
 
     @GetMapping("/uploadForm")
@@ -319,5 +320,34 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
         return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
     }
 
+    /*********************** 첨부파일삭제 ************************/
+    @ResponseBody
+    @PostMapping("/deleteFile")
+    public ResponseEntity<String> deleteFile(String fileName, String type){
+        log.info("첨부파일삭제 : "+fileName);
+
+        File file;
+        try{
+            file = new File("/Users/kim-yina/Desktop/upload/tmp/"+ URLDecoder.decode(fileName,"UTF-8"));
+                log.info(file.hashCode()+"  ************ 1");
+
+            file.delete();
+
+            //이미지파일일 경우 ----> 썸넬도 같이 삭제
+            if(type.equals("image")){
+                String largeFileName = file.getAbsolutePath().replace("s_","");
+                log.info("원본파일(largeFileName)이름 : "+largeFileName);
+
+                file = new File(largeFileName);
+                log.info(file.hashCode() +" ************ 2");
+                file.delete();
+            }
+
+        }catch(UnsupportedEncodingException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }//catch
+        return new ResponseEntity<>("deleted",HttpStatus.OK);
+    }
 }
 
