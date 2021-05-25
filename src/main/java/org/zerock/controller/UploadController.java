@@ -3,6 +3,8 @@ package org.zerock.controller;
 import lombok.extern.log4j.Log4j;
 
 import net.coobird.thumbnailator.Thumbnailator;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,7 +128,7 @@ public class UploadController {
             String uploadFileName = multipartFile.getOriginalFilename();
 
             // IE는 패스가 나오니까 마지막 "\"를 기준으로 잘라낸 문자열이 실제 파일이름
-            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("//")+1); //  슬래시 역슬래시 둘다먹음,,,,뭐?
+            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
             log.info("only file name ::: "+uploadFileName);
             attachFileDTO.setFileName(uploadFileName);
 
@@ -276,8 +280,43 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
                                   ---> 여기서 "/경로/경로/경로/" 경로 맨뒤에 / 꼭 붙여야됨, 안붙이면 폴더이름 그대로 이어짐
 */
 
+/*************************** 다운로드 처리 ******************************/
+
+    @ResponseBody
+    @GetMapping(value = "/download",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                                                        //--> 다운로드 MIME 타입 : application/octet-stream
+    public ResponseEntity<Resource> downloadFile(String fileName){
+            //org.springframework.core.io.Resource
+        log.info("다운로드 파일 :::"+fileName);
+
+        Resource resource = new FileSystemResource("/Users/kim-yina/Desktop/upload/tmp/"+fileName);
+        // 500 에러 : file [/Users/kim-yina/Desktop/upload/tmpjtest1.jpg] cannot be resolved in the file system for checking its content length
+        // --> /Users/kim-yina/Desktop/upload/tmp/ 여기도 맨끝에 슬래시 꼭붙일것
+        log.info("다운로드 리소스 읽음 :::"+resource);
+        /*
+        INFO : org.zerock.controller.UploadController - 다운로드 파일 :::jtest1.jpg
+        INFO : org.zerock.controller.UploadController - 다운로드 리소스 읽음 :::file [/Users/kim-yina/Desktop/upload/tmpjtest1.jpg]
+        */
+
+        String resourceName = resource.getFilename();
+
+        HttpHeaders headers = new HttpHeaders();
+        try{
+            log.info("다운로드 try-----");
+            headers.add(
+                    "Content-Disposition"
+                    ,"attachment; filename="
+                            + new String(resourceName.getBytes(StandardCharsets.UTF_8),"ISO-8859-1")
+                    //ISO-8859-1 : get방식으로 보낼 때 기본인코딩
+            );
+        }catch(UnsupportedEncodingException e){
+            log.info("다운로드 catch-----");
+            e.printStackTrace();
+        }//catch
 
 
+        return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
+    }
 
 }
 
