@@ -283,8 +283,9 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
 /*************************** 다운로드 처리 ******************************/
 
     @ResponseBody
-    @GetMapping(value = "/download",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                                                        //--> 다운로드 MIME 타입 : application/octet-stream
+    @GetMapping(value = "/download"
+            ,produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                                   //--> 다운로드 MIME 타입 : application/octet-stream
     public ResponseEntity<Resource> downloadFile(String fileName){
             //org.springframework.core.io.Resource
         log.info("다운로드 파일 :::"+fileName);
@@ -292,7 +293,7 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
         Resource resource = new FileSystemResource("/Users/kim-yina/Desktop/upload/tmp/"+fileName);
         // 500 에러 : file [/Users/kim-yina/Desktop/upload/tmpjtest1.jpg] cannot be resolved in the file system for checking its content length
         // --> /Users/kim-yina/Desktop/upload/tmp/ 여기도 맨끝에 슬래시 꼭붙일것
-        log.info("다운로드 리소스 읽음 :::"+resource);
+        log.info("다운로드 리소스 읽음------->"+resource);
         /*
         INFO : org.zerock.controller.UploadController - 다운로드 파일 :::jtest1.jpg
         INFO : org.zerock.controller.UploadController - 다운로드 리소스 읽음 :::file [/Users/kim-yina/Desktop/upload/tmpjtest1.jpg]

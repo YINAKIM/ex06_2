@@ -11,6 +11,8 @@
     <title>Title</title>
 
     <style type="text/css">
+
+/* 업로드된 파일들 목록, 일반파일은 파일아이콘, 이미지파일은 이미지아이콘 보여줄 css */
         .uploadResult {
             width:100%;
             background-color: gray;
@@ -30,7 +32,37 @@
         }
 
         .uploadResult ul li img{
-            width: 20px;
+            width: 100px;
+            /*width: 20px;*/
+        }
+
+        .uploadResult ul li span{
+            color : white;
+        }
+
+    /*  p542. 썸네일 클릭하면 원본이미지 출력 css  */
+        .bigPictureWrapper{
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            top: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: gray;
+            z-index: 100;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .bigPicture{
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bigPicture img{
+            width: 600px;
         }
     </style>
 </head>
@@ -49,7 +81,15 @@
         multiple이니까 첨부파일 목록이 li로 들어갈 수 있게 ul에 넣는다--%>
         </ul>
     </div>
+
+
     <button id="uploadBtn">Upload</button>
+
+    <div class="bigPictureWrapper">
+        <div class="bigPicture">
+        <%--썸네일 클릭하면 원본이미지 보여줄 div--%>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
@@ -57,7 +97,26 @@
 
     <%-- FormData객체로 Ajax를 이용, 파일데이터만 전송   --%>
     <script>
+
+    //썸넬클릭하면 호출될 함수
+    function showImage(fileCallPath){
+        alert(fileCallPath);
+
+        $(".bigPictureWrapper").css("display","flex").show(); //화면 가운데 배치
+
+        $(".bigPicture")
+        .html("<img src='/display?fileName="+encodeURIComponent(fileCallPath)+"'>")
+        .animate({ width:'100%', height:'100%'},1000);  //  지정된 시간동안 animate
+
+
+    }
     $(document).ready(function () {
+        $(".bigPictureWrapper").on("click",function (e) {
+            $(".bigPicture").animate({ width:'0%', height:'0%'},1000);
+            setTimeout(()=>{
+                $(this).hide();
+            },1000);
+        });
 
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)"); // 특정 확장자 지정해서 제한 : exe,sh,zip,alz 업로드막기
         var maxSize = 524880;   // 5MB이상 업로드막기
@@ -91,11 +150,28 @@
             $(uploadResultArr).each(function(i, obj){
                 if(!obj.image){
 
-                    str += "<li><img src='/resources/img/attach.png'>"+obj.fileName+"</li>";
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
+
+
+
+                    console.log("일반파일 다운로드 경로+이름"+fileCallPath);
+                    console.log("-------");
+                    str += "<li><a href='/download?fileName="
+                        + fileCallPath
+                        + "'><img src='/resources/img/attach.png'>"
+                        + obj.fileName
+                        +"</a></li>";
+                    //attach.png 파일 클릭하면 ----> 다운로드에 필요한 경로 + UUID 붙은 파일명 이용해서 다운로드 가능하도록 만들기
                 }else{
 
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
-                    str += "<li><img src='/display?fileName=" + fileCallPath + "'>"+obj.fileName+"</li>";
+
+                    /**************** 썸넬클릭하면 원본보여주기 ***************/
+                    var originPath = obj.uploadPath +"\\"+ obj.uuid +"_"+obj.fileName;
+                    originPath = originPath.replace(new RegExp(/\\/g),"/");
+                    /**************** 썸넬클릭하면 원본보여주기 ***************/
+
+                    str += "<li><a href=\"javascript:showImage(\'"+originPath+"\')  \"><img src='/display?fileName=" + fileCallPath + "'>"+obj.fileName+"</li>";
                     /*
                     이미지파일을 업로드하면 해당 파일의 썸넬이 옆에 보임
                     */
