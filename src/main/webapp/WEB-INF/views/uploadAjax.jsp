@@ -93,10 +93,15 @@
 
                     str += "<li><img src='/resources/img/attach.png'>"+obj.fileName+"</li>";
                 }else{
-                    str += "<li>"+obj.fileName+"</li>";
 
-                }
-                //파일명 null..........
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
+                    str += "<li><img src='/display?fileName=" + fileCallPath + "'>"+obj.fileName+"</li>";
+                    /*
+                    이미지파일을 업로드하면 해당 파일의 썸넬이 옆에 보임
+                    */
+
+                }// else
+
 
             }); //each
 
