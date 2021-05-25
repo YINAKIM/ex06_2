@@ -1,0 +1,4 @@
+--파일업로드 SQL
+SELECT COUNT(*) FROM TBL_BOARD;
+
+

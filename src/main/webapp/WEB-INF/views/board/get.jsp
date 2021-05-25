@@ -156,7 +156,7 @@
                                     }//for
 
                                     replyUL.html(str);
-                                    showReplyPageCnt(replyCnt);
+                                    showReplyPage(replyCnt);
                             });//getList
                         }//showList
 
@@ -370,7 +370,7 @@
                         console.log("글번호 : "+bnoValue);
 
                         // [2] replyService Obj에서 댓글목록을 출력하는 getList
-                        replyService.getList(
+         /*               replyService.getList(
                             {bno:bnoValue, page:1}
                             ,function(list){
                                 for(var i = 0, len = list.length || 0 ; i<len ; i++){
@@ -379,7 +379,7 @@
                             }
                         ); //replyService.getList
                             console.log("getList지남  : ");
-
+*/
                         // [3] replyService Obj에서 댓글을 삭제하는 remove
                       replyService.remove(
                              18 // rno=18로 테스트
