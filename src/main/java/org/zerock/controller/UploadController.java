@@ -333,7 +333,8 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
             file = new File("/Users/kim-yina/Desktop/upload/tmp/"+ URLDecoder.decode(fileName,"UTF-8"));
                 log.info(file.hashCode()+"  ************ 1");
 
-            file.delete();
+            boolean isFileDelete = file.delete();
+            log.info(isFileDelete+"////////////////////진짜 File 삭제된거니? ");
 
             //이미지파일일 경우 ----> 썸넬도 같이 삭제
             if(type.equals("image")){
@@ -342,7 +343,10 @@ INFO : org.zerock.controller.UploadController - 업로드 경로에서 이미지
 
                 file = new File(largeFileName);
                 log.info(file.hashCode() +" ************ 2");
-                file.delete();
+
+                boolean isThumbDelete = file.delete();
+                log.info(isThumbDelete+"////////////////////진짜 썸넬 삭제된거니? ");
+
             }
 
         }catch(UnsupportedEncodingException e){

@@ -120,7 +120,7 @@
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)"); // 특정 확장자 지정해서 제한 : exe,sh,zip,alz 업로드막기
         var maxSize = 524880;   // 5MB이상 업로드막기
 
-
+<% %>
         function checkExtension(fileName, fileSize){
 
             if(regex.test(fileName)){
@@ -174,36 +174,44 @@
 
                 if(obj.image){ // image파일일경우
 
-                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
                     console.log("일반파일 다운로드 경로+이름"+fileCallPath);
                     console.log("-------");
 
                     str    +=  "<li> <div>";
                     str    +=   "<span>"+ obj.fileName +"</span>";
-                    str    +=   "<button type='button' class='btn btn-warning btn-circle'>";
+                                                /* 삭제처리를 위해 받아오는 (저장된경로+저장된파일명), data-file, data-type */
+                    str    +=   "<button type='button' data-file='"+ fileCallPath +"' data-type='image'"
+                           + "class='btn btn-warning btn-circle'>";
+
                     str    +=   "<i class='fa fa-times'></i>";
                     str    +=   "</button><br>";
                     str    +=   "<img src='/display?fileName="+ fileCallPath +"'>";
                     str    +=   "</div></li>";
                     /*  p559. 근데 왜 +로 연결안하고 하나하나 다 str += 하지?  */
 
-                    console.log("showUploadResult의 image str ---> "+str);
+                    //console.log("showUploadResult의 image str ---> "+str);
 
                 }else{  //일반파일인 경우
 
-                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
                     var fileLink = fileCallPath.replace(new RegExp(/\\/g),"/");
 
                     str    +=  "<li> <div>";
                     str    +=   "<span>"+ obj.fileName +"</span>";
-                    str    +=   "<button type='button' class='btn btn-warning btn-circle'>";
+
+                                          /* 삭제처리를 위해 받아오는 (저장된경로+저장된파일명), data-file, data-type
+                                             : HTML 태그에 사용하는 'data-' 속성 알아보기 -> p561*/
+                    str    +=   "<button type='button' data-file='"+fileCallPath+"' data-type='file'"
+                           + "class='btn btn-warning btn-circle'>";
+
                     str    +=   "<i class='fa fa-times'></i>";
                     str    +=   "</button><br>";
-                    str    +=   "<img src='/resources/img/attach.png"+ fileCallPath +"'>";
+                    str    +=   "<img src='/resources/img/attach.png'>";
                     str    +=   "</div></li>";
                     /* </a>가 여는게 없는데 그냥 img뒤에 붙이기도함? */
 
-                    console.log("showUploadResult의 file str ---> "+str);
+                    //console.log("showUploadResult의 file str ---> "+str);
 
                 }//else
 
@@ -218,9 +226,27 @@
         $(".uploadResult").on("click","button",function(e){
             console.log("delete file눌럿다!");// 일단 확인용
 
+            var targetFile = $(this).data("file");
+            var type = $(this).data("type");
+
+            var targetLi = $(this).closest("li"); // closest 알아보기 : 위로거슬러가서 가장 가까운 요고 1개만 찾음 : 요소 0개 또는 1개 반환
+                                        // closest() 과 parent()
+                                        // -> https://www.notion.so/closet-parent-aa1ac08d0f7d402b9e70ecb48100720f
+
+            $.ajax({
+                 url : '/deleteFile'
+                ,data : { fileName: targetFile, type:type }
+                ,dataType : 'text'
+                , type: 'POST'
+                    ,success: function (result) {
+                     console.log("삭제성공");
+                        alert(result);
+                        targetLi.remove();
+                    }//succ
+            }); //ajax
+
 
         });
-
         /************* 첨부파일 변경처리 : X 누르면 삭제처리하는거 ***************/
 
 
