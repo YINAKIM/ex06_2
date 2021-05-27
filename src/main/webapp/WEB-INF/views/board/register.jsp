@@ -76,34 +76,6 @@
 
 
 
-<%-- 첨부파일 등록 --%>
-<div class="row">
-<div class = "col-lg-12">
-    <div class="panel panel-default">
-
-        <div class="panel-heading">파일Attach</div>
-        <div class="panel-body">
-
-            <%-- 폼 --%>
-            <div class="form-group uploadDiv">
-                <input type="file" name="uploadFile" multiple>
-            </div>
-
-            <div class="uploadResult">
-                <ul>
-                <%-- 업로드 결과 자리 --%>
-                </ul>
-            </div>
-        </div>
-        <%--    panel-body    --%>
-
-
-    </div><%-- panel-default --%>
-</div><%--col-lg-12--%>
-
-
-</div>
-<%--row--%>
 
 <%-- 첨부파일 등록 : 끝 --%>
 <script type="text/javascript">
@@ -113,7 +85,35 @@
 
         $("button[type='submit']").on("click",function (e) {
             e.preventDefault();
-            console.log("submit clicked");
+            console.log("submit clicked******************************");
+
+
+            var str = "";
+            $(".uploadResult ul li").each(function(i, obj){
+                var jobj = $(obj);
+                console.dir(jobj); // log아니고 dir
+
+                //submit버튼 누르면 BoardVO에 List<BoardAttachVO>로 보낼 hidden값들
+                str += "<input type='hidden' name='attachList["+i+"].uuid' value='"+jobj.data("uuid")+"'>";
+                str += "<input type='hidden' name='attachList["+i+"].uploadPath' value='"+jobj.data("path")+"'>";
+                str += "<input type='hidden' name='attachList["+i+"].fileName' value='"+jobj.data("filename")+"'>";
+                str += "<input type='hidden' name='attachList["+i+"].fileType' value='"+jobj.data("type")+"'>";
+                /*
+                          attach[i] 는 List에서 찾을 인덱스,
+                          attach[i].VO에있는 필드명 --->(대소문자 주의)
+
+                          jobj.data("uuid")
+                          jobj.data("path")
+                          jobj.data("filename")
+                          jobj.data("type") -----> 여기 들어가는건 태그안에 속성으로 지정된 data-type='속성값이름'
+                */
+
+            });//업로드된 파일 각각의 li
+
+           // formObj.append(str);
+            formObj.append(str).submit();
+
+
         });
 
 
@@ -173,12 +173,15 @@
             $(uploadResultArr).each(function(i,obj){
 
                 if(obj.image){ // image파일일경우
+                    console.log("이미지 파일이다");
 
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
-                    console.log("일반파일 다운로드 경로+이름"+fileCallPath);
+
                     console.log("-------");
 
-                    str    +=  "<li> <div>";
+                        /* DB로 보낼 값들을 읽어가기 위한 data-속성들 (BoardAttachVO의 멤버필드로 들어갈 값들) ---> data-type은 obj.image : BoardAttachVO에서는 bool이고, DB에서 char(1) 로 들어갈 것*/
+                    str    +=  "<li data-path='"+obj.uploadPath +"' data-uuid='"+ obj.uuid +"' data-type='"+ obj.image +"' data-filename='"+ obj.fileName +"' "
+                           +   "> <div>";
                     str    +=   "<span>"+ obj.fileName +"</span>";
                                                 /* 삭제처리를 위해 받아오는 (저장된경로+저장된파일명), data-file, data-type */
                     str    +=   "<button type='button' data-file='"+ fileCallPath +"' data-type='image'"
@@ -194,20 +197,26 @@
 
                 }else{  //일반파일인 경우
 
+                    console.log("일반 파일이다");
+
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
                     var fileLink = fileCallPath.replace(new RegExp(/\\/g),"/");
 
-                    str    +=  "<li> <div>";
+                                                                                    /* DB로 보낼 값들을 읽어가기 위한 data-속성들 (BoardAttachVO의 멤버필드로 들어갈 값들) */
+                    str    +=  "<li data-path='"+obj.uploadPath +"' data-uuid='"+ obj.uuid +"' data-type='"+ obj.image +"' data-filename='"+ obj.fileName +"' "
+                           +   "> <div>";
                     str    +=   "<span>"+ obj.fileName +"</span>";
 
                                           /* 삭제처리를 위해 받아오는 (저장된경로+저장된파일명), data-file, data-type
                                              : HTML 태그에 사용하는 'data-' 속성 알아보기 -> p561*/
                     str    +=   "<button type='button' data-file='"+fileCallPath+"' data-type='file'"
+
+
                            + "class='btn btn-warning btn-circle'>";
 
                     str    +=   "<i class='fa fa-times'></i>";
                     str    +=   "</button><br>";
-                    str    +=   "<img src='/resources/img/attach.png'>";
+                    str    +=   "<img src='/resources/img/attach.png' width='50px' height='50px'>";
                     str    +=   "</div></li>";
                     /* </a>가 여는게 없는데 그냥 img뒤에 붙이기도함? */
 
@@ -249,6 +258,8 @@
         });
         /************* 첨부파일 변경처리 : X 누르면 삭제처리하는거 ***************/
 
+
+        /************* 첨부파일 DB작업 : hidden으로 첨부파일 정보 수집, BoardVO로 보낼거니까 name='attach[i]'로 보낸다(변수 선언된 순서대로?) ***************/
 
 
 
@@ -292,6 +303,38 @@
 
               <button type="submit" class="btn btn-default">Submit</button>
               <button type="reset" class="btn btn-default">Reset</button>
+
+
+                <%-- 첨부파일 등록 --%>
+                <div class="row">
+                    <div class = "col-lg-12">
+                        <div class="panel panel-default">
+
+                            <div class="panel-heading">파일Attach</div>
+                            <div class="panel-body">
+
+                                <%-- 폼 --%>
+                                <div class="form-group uploadDiv">
+                                    <input type="file" name="uploadFile" multiple>
+                                </div>
+
+                                <div class="uploadResult">
+                                    <ul>
+                                        <%-- 업로드 결과 자리 --%>
+                                    </ul>
+                                </div>
+                            </div>
+                            <%--    panel-body    --%>
+
+
+                        </div><%-- panel-default --%>
+                    </div><%--col-lg-12--%>
+
+
+                </div>
+                <%--row--%>
+
+
             </form>
 
           </div>

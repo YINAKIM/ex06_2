@@ -62,10 +62,30 @@ public class BoardController {
     // 등록 작업은 POST
     @PostMapping("/register")
     public String register(BoardVO board, RedirectAttributes rttr){
+
+        log.info("============== 일단 확인만 ===============");
+        log.info("register에서 넘어온 첨부파일정보 : "+board); // private List<BoardAttachVO> attachList 로 들어갈 아이들
+
+        if(board.getAttachList() != null){
+            board.getAttachList().forEach(attach -> log.info(attach));
+        }
+
+        /*
+        첨부파일정보
+        INFO : org.zerock.controller.BoardController - ============== 일단 확인만 ===============
+        INFO : org.zerock.controller.BoardController - register에서 넘어온 첨부파일정보 : BoardVO(bno=null, title=11, content=33, writer=3, regdate=null, updateDate=null, replyCnt=0, attachList=[BoardAttachVO(uuid=630b8b6e-6382-40c7-8798-aae0f5bf1dd2, uploadPath=2021/05/27, fileName=토비의 스프링_초안4.docx, fileType=false, bno=null), BoardAttachVO(uuid=002c6454-a447-4f56-ab2e-fa2716975b33, uploadPath=2021/05/27, fileName=토비의 스프링_초안5.docx, fileType=false, bno=null), BoardAttachVO(uuid=0aba3354-efca-4899-ab93-fd88e17af9b5, uploadPath=2021/05/27, fileName=토비의 스프링_초안6.docx, fileType=false, bno=null)])
+        INFO : org.zerock.controller.BoardController - BoardAttachVO(uuid=630b8b6e-6382-40c7-8798-aae0f5bf1dd2, uploadPath=2021/05/27, fileName=토비의 스프링_초안4.docx, fileType=false, bno=null)
+        INFO : org.zerock.controller.BoardController - BoardAttachVO(uuid=002c6454-a447-4f56-ab2e-fa2716975b33, uploadPath=2021/05/27, fileName=토비의 스프링_초안5.docx, fileType=false, bno=null)
+        INFO : org.zerock.controller.BoardController - BoardAttachVO(uuid=0aba3354-efca-4899-ab93-fd88e17af9b5, uploadPath=2021/05/27, fileName=토비의 스프링_초안6.docx, fileType=false, bno=null)
+        INFO : org.zerock.controller.BoardController - ============== 일단 확인만 ================
+        INFO : org.zerock.controller.BoardController - register : BoardVO(bno=null, title=11, content=33, writer=3, regdate=null, updateDate=null, replyCnt=0, attachList=[BoardAttachVO(uuid=630b8b6e-6382-40c7-8798-aae0f5bf1dd2, uploadPath=2021/05/27, fileName=토비의 스프링_초안4.docx, fileType=false, bno=null), BoardAttachVO(uuid=002c6454-a447-4f56-ab2e-fa2716975b33, uploadPath=2021/05/27, fileName=토비의 스프링_초안5.docx, fileType=false, bno=null), BoardAttachVO(uuid=0aba3354-efca-4899-ab93-fd88e17af9b5, uploadPath=2021/05/27, fileName=토비의 스프링_초안6.docx, fileType=false, bno=null)])
+        */
+        log.info("============== 일단 확인만 ================");
+
         log.info("register : "+ board);
-        service.register(board);
-        rttr.addFlashAttribute("result",board.getBno());
-        rttr.addFlashAttribute("result2",board.getBno());
+        //service.register(board);
+        //rttr.addFlashAttribute("result",board.getBno());
+       // rttr.addFlashAttribute("result2",board.getBno());
         return "redirect:/board/list";
     }
         /*
