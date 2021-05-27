@@ -150,7 +150,7 @@
 
             var str = "";
             $(uploadResultArr).each(function(i, obj){
-                if(!obj.image){
+                if(!obj.image){ // image파일이 아닌 일반파일인 경우
 
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
                     console.log("일반파일 다운로드 경로+이름"+fileCallPath);
@@ -193,7 +193,9 @@ $('span').data('foo'); //---> JSON 객체 리턴 {age:13, name: 'kim'}
                         + "<span data-file=\'"+ fileCallPath +"\' data-type='file'> X </span>"
                         + "</div></li>";
                     //attach.png 파일 클릭하면 ----> 다운로드에 필요한 경로 + UUID 붙은 파일명 이용해서 다운로드 가능하도록 만들기
-                }else{
+
+
+                }else{  // image파일인 경우
 
                     var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
 

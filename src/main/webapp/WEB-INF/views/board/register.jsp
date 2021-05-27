@@ -157,15 +157,80 @@
                 ,dataType : 'json'
                     ,success : function(result){
                      console.log(result);
-                     //showUploadResult(result); // 업로드 결과 처리 함수
+                     showUploadResult(result); // 업로드 결과 처리 함수
                     }//succ
             });//ajax
         });//file 인풋에 change생기면
-/*
 
-*/
+        //업로드 처리 결과 보여주는 함수
+        function showUploadResult(uploadResultArr) {
+            if(!uploadResultArr || uploadResultArr.length == 0 ){ return;} // 결과가 없으면 이 함수 들어왔어도 return으로 종료,
+
+            var uploadUL = $(".uploadResult ul");
+
+            var str = "";
+
+            $(uploadResultArr).each(function(i,obj){
+
+                if(obj.image){ // image파일일경우
+
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/"+ obj.uuid +"_"+ obj.fileName);
+                    console.log("일반파일 다운로드 경로+이름"+fileCallPath);
+                    console.log("-------");
+
+                    str    +=  "<li> <div>";
+                    str    +=   "<span>"+ obj.fileName +"</span>";
+                    str    +=   "<button type='button' class='btn btn-warning btn-circle'>";
+                    str    +=   "<i class='fa fa-times'></i>";
+                    str    +=   "</button><br>";
+                    str    +=   "<img src='/display?fileName="+ fileCallPath +"'>";
+                    str    +=   "</div></li>";
+                    /*  p559. 근데 왜 +로 연결안하고 하나하나 다 str += 하지?  */
+
+                    console.log("showUploadResult의 image str ---> "+str);
+
+                }else{  //일반파일인 경우
+
+                    var fileCallPath = encodeURIComponent( obj.uploadPath +"/s_"+ obj.uuid +"_"+ obj.fileName);
+                    var fileLink = fileCallPath.replace(new RegExp(/\\/g),"/");
+
+                    str    +=  "<li> <div>";
+                    str    +=   "<span>"+ obj.fileName +"</span>";
+                    str    +=   "<button type='button' class='btn btn-warning btn-circle'>";
+                    str    +=   "<i class='fa fa-times'></i>";
+                    str    +=   "</button><br>";
+                    str    +=   "<img src='/resources/img/attach.png"+ fileCallPath +"'>";
+                    str    +=   "</div></li>";
+                    /* </a>가 여는게 없는데 그냥 img뒤에 붙이기도함? */
+
+                    console.log("showUploadResult의 file str ---> "+str);
+
+                }//else
+
+            }); // each : 업로드된 파일 각각
+
+            uploadUL.append(str); // 여기다 붙여야 보여주지
+
+
+        }// showUploadResult(result)
+
+        /************* 첨부파일 변경처리 : X 누르면 삭제처리하는거 ***************/
+        $(".uploadResult").on("click","button",function(e){
+            console.log("delete file눌럿다!");// 일단 확인용
+
+
+        });
+
+        /************* 첨부파일 변경처리 : X 누르면 삭제처리하는거 ***************/
+
+
+
+
     });//ready
 </script>
+
+
+
 
 
 <div class="row">
