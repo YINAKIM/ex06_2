@@ -72,9 +72,15 @@ public class BoardServiceImpl implements BoardService{
         return mapper.update(board) == 1;       //  삭제/수정은 void로 설계할 수 도 있지만 성공여부를 정확히 처리하기 위해 boolean으로
     }
 
+    @Transactional
     @Override
     public boolean remove(Long bno) {
         log.info("remove......"+bno);
+
+        //게시글삭제 시 첨부파일 같이 삭제 : @Transactional처리
+        // 삭제요청 > 첨부파일 먼저 삭제 > 게시글 삭제
+        attachMapper.deleteAll(bno);
+
         return mapper.delete(bno) == 1;       //  삭제/수정은 void로 설계할 수 도 있지만 성공여부를 정확히 처리하기 위해 boolean으로
 
     }
