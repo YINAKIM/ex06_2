@@ -64,9 +64,10 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public ReplyPageDTO getListPage(Criteria cri, Long bno) {
         return new ReplyPageDTO(
-                 mapper.getcountByBno(bno)
+                 mapper.getCountByBno(bno)
                 ,mapper.getListWithPaging(cri,bno)
         );
+        //오타주의
     }
 
 }

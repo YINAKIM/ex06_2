@@ -3,14 +3,20 @@ package org.zerock.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.zerock.domain.BoardAttachVO;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.PageDTO;
 import org.zerock.service.BoardService;
+
+import java.util.List;
 
 @Controller
 @Log4j
@@ -55,9 +61,10 @@ public class BoardController {
 
     //등록작업을 위해 입력받을 화면을 보여주는건 GET
     @GetMapping("/register")
-    public void register(){
+    public void register() {
 
     }
+
 
     // 등록 작업은 POST
     @PostMapping("/register")
@@ -115,6 +122,9 @@ public class BoardController {
         */
 
 
+
+
+
     // 번호로 조회페이지
     @GetMapping({"/get","/modify"})
     public void get(@RequestParam("bno")Long bno, Model model,
@@ -122,6 +132,14 @@ public class BoardController {
         log.info("/get or /modify");
         model.addAttribute("board",service.get(bno));
     }
+
+    //게시물 조회 시 첨부파일 조회
+    @GetMapping(value = "/getAttachList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno){
+        log.info("첨부파일List 핸들러---getAttachList할 글번호 bno : bno");
+        return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
+    }
+
 
     //수정 처리 : 수정작업 시작화면은 GET, 실제 수정작업은 POST
     @PostMapping("/modify")

@@ -19,7 +19,7 @@ public interface ReplyMapper {
             @Param("cri") Criteria cri, @Param("bno") Long bno);
 
     //댓글 페이징을 위해 [글번호bno기준] 전체 댓글 숫자 가져오기
-    public int getcountByBno(Long bno);
+    public int getCountByBno(Long bno);
 
 
 }

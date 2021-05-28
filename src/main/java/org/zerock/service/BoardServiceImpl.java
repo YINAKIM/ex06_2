@@ -91,6 +91,12 @@ public class BoardServiceImpl implements BoardService{
         return mapper.getTotal(cri);
     }
 
+    @Override
+    public List<BoardAttachVO> getAttachList(Long bno) {
+        log.info("첨부파일 getAttachList by bno");
+        return attachMapper.findByBno(bno);
+    }
+
 /*
 페이징처리안된 CRUD테스트용 getList
 

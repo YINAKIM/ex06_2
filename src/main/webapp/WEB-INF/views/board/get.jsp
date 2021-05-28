@@ -122,9 +122,6 @@
                         function showList(page){    // showList : 페이지번호를 받아서 리스트 보여줌
                             console.log("showList---->"+page);
 
-
-
-
                             replyService.getList(
                                 {bno:bnoValue, page:page||1}    // 파라미터 없는 경우 페이지번호 1로 설정
                                 ,function (replyCnt,list) {
@@ -144,11 +141,12 @@
 
                                     var str = "";
                                     if(list == null || list.length == 0){
-                                        replyUL.html("");
+                                        console.log("댓글리스트 null???");
                                         return;
                                     }
 
                                     for(var i=0, len = list.length || 0; i<len; i++){
+                                        console.log("[i] 번 댓글 보여주기+++++++++++++++++++++++++++++++++++++++++++++++++");
                                         str += "<li class='left clearfix' data-rno='"+list[i].rno+"'>";
                                         str += "<div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>";
                                         str += "<small class='pull-right text-muted'>"+list[i].replyDate+"</small></div>";
@@ -159,6 +157,10 @@
                                     showReplyPage(replyCnt);
                             });//getList
                         }//showList
+
+
+
+
 
                         /* [part17] 댓글페이징번호 출력 */
 
@@ -261,6 +263,7 @@
 
                                 };
 
+                                // 이걸쓰면 왜좋은지? get.jsp내부에서는 Ajax 호출은 replyService라는 이름의 js객체에 감춰져있음 -> 필요한 파라미터만 전달하는 형태로 간결해짐
                                 replyService.add(reply,function (result) {
                                     console.log("add들어옴");
                                     alert(result);
@@ -336,81 +339,27 @@
                             replyService.update(reply,function(result){
                                 alert(result);
                                 modal.modal("hide");
-                                //showList(1);
                                 showList(pageNum);
                             }); //update
                         });//modalModBtn누르면
 
                         /* 4. 댓글삭제 : 삭제시에도 현재 댓글이 포함된 페이지로 이동하도록 */
-                        modalRemoveBtn.on("click",function(result){
+                       modalRemoveBtn.on("click",function(result){
                             var rno = modal.data("rno");
 
                             replyService.remove(rno,function(result){
                                 alert(result);
                                 modal.modal("hide");
-                                //showList(1);
+
                                 showList(pageNum);
                             });
                         }); //modalRemoveBtn
 
 
-                        // [1] replyService Obj에서 add함수 테스트
-                        // 이걸쓰면 왜좋은지? get.jsp내부에서는 Ajax 호출은 replyService라는 이름의 js객체에 감춰져있음 -> 필요한 파라미터만 전달하는 형태로 간결해짐
-                        replyService.add(
-                            {
-                                reply:"add로 들어가는댓글"
-                                ,replyer:"addadd"
-                                ,bno:bnoValue
-                            },
-                            function(result){
-                                alert("RESULT : "+result);
-                            }
-                        );
-
                         console.log("글번호 : "+bnoValue);
 
-                        // [2] replyService Obj에서 댓글목록을 출력하는 getList
-         /*               replyService.getList(
-                            {bno:bnoValue, page:1}
-                            ,function(list){
-                                for(var i = 0, len = list.length || 0 ; i<len ; i++){
-                                    console.log(list[i]);
-                                }
-                            }
-                        ); //replyService.getList
-                            console.log("getList지남  : ");
-*/
-                        // [3] replyService Obj에서 댓글을 삭제하는 remove
-                      replyService.remove(
-                             18 // rno=18로 테스트
-                            ,function(count){
-                                console.log(count);
-                                if(count=="success"){alert("------REMOVED------")}
-                            }
-                            ,function(err){
-                                alert("------REMOVE ERROR------");
-                            }
-                        );//replyService.remove
-
-                        //[4] replyService Obj에서 댓글을 수정하는 update
-                        replyService.update({
-                             rno : 20
-                            ,bno : bnoValue
-                            ,reply : "replyService의 update로 댓글수정"
-                            }
-                            ,function(result){alert("update로 댓글수정 완료")}
-
-                        );//replyService.update
 
 
-                        //[5]replyService Obj에서 댓글을 조회하는 get
-                        replyService.get(
-                            20  // rno=20 번 댓글 조회
-                            ,function(data){
-                                console.log("replyService.get으로 댓글조회--------");
-                                console.log(data);
-                            }
-                        );//replyService.get
 
                     });
 
@@ -484,15 +433,19 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="panel panel-default">
+
                             <%--heading--%>
                                 <div class="panel-heading">
                                     <i class="fa fa-comments fa-fw"></i> Reply
                                 <button id="addReplyBtn" class="btn btn-primary btn-xs pull-right">NEW REPLY</button>
                                 </div>
+
                             <%--reply body--%>
                                 <div class="panel-body">
                                     <ul class="chat">
-                                      <li class="left clearfix" data-rno='22'><%-- 22번 --%>
+                                        <p>///////////////////</p>
+                                        <%-- 댓글 li자리 --%>
+                                      <%--<li class="left clearfix" data-rno='22'>&lt;%&ndash; 22번 &ndash;%&gt;
                                         <div>
                                             <div class="header">
                                                 <strong class="primary-font">user00</strong>
@@ -501,10 +454,11 @@
                                             </div>
                                                 <p>Good job!</p>
                                         </div>
-                                      </li>
+                                      </li>--%>
                                     </ul>
                                 </div>
                            <%-- reply body :e --%>
+
                                 <div class="panel-footer"><%--댓글 페이지번호 추가될 부분--%></div>
                                 <script type="text/javascript">
 

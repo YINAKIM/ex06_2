@@ -10,7 +10,7 @@ console.log("Reply Module...............!!!!");
 var replyService = (function(){
     // replyService가 받을 함수들 : add, getList, remove,update
 
-    //[1] 댓글추가
+    //[1] 댓글추가 : add
     function add(reply, callback, error){
         console.log("reply..................add");
 
@@ -36,42 +36,28 @@ var replyService = (function(){
 
     }//add
 
-    //[2] 댓글 목록 조회
+    //[2] 댓글 목록 조회 : getList
     function getList(param,callback,error){
         var bno = param.bno;
         var page = param.page || 1; // js에서 ||, &&는 bool타입이 아니고 값자체를 리턴한다.
                                     // ||는 하나라도 true면 true"값" 반환, &&는 하나라도 false면 false 값 반환
-                /*
-                   [ js의 falsey value : 이 값이면 전부 false --> 이 값이 아니면 전부 true로 간주]
-                       false, 0, -0, 0n, ""(빈String), null, undefined, NaN
 
-                       *NaN : 숫자가 아니라는 뜻인데, 연산결과가 잘못될 경우 NaN이라고 인식하기도 함
-                       1. 숫자로서 읽을 수 없음 (parseInt("어쩌구"), Number(undefined))
-                        2. 결과가 허수인 수학 계산식 (Math.sqrt(-1))
-                        3. 피연산자가 NaN (7 ** NaN)
-                        4. 정의할 수 없는 계산식 (0 * Infinity)
-                        5. 문자열을 포함하면서 덧셈이 아닌 계산식 ("가" / 3)
-                        [주의] NaN === NaN --> false
-                        NaN은 다른 모든 값과 비교(==, !=, ===, !==)했을 때 같지 않으며, 다른 NaN과도 같지 않습니다.
-                        NaN의 판별은 Number.isNaN() 또는 isNaN()을 사용하면 제일 분명하게 수행할 수 있습니다.
-                        아니면, 오로지 NaN만이 자기자신과 비교했을 때 같지 않음을 이용할 수도 있습니다.
-                 */
-        $.getJSON(
-            "/replies/pages/"+bno+"/"+page+".json"
+        $.getJSON("/replies/pages/"+bno+"/"+page+".json"
             ,function(data){
                 if(callback){
+                    console.log("********"+data);
                     //callback(data); //=>  댓글목록만 가져오는 경우
                     callback(data.replyCnt, data.list);   //=> 댓글 숫자와 목록을 가져오는 경우
                 }
-        })
-        .fail(function(xhr, status, err){
+        }).fail(function(xhr, status, err){
             if(error){
+                console.log("getList의 getJSON에서 error");
                 error();
             }
         });//getJSON.fail
     }//getList
 
-    //[3] 댓글 삭제
+    //[3] 댓글 삭제 : remove
     function remove(rno, callback, error){
         $.ajax({
 
@@ -87,7 +73,7 @@ var replyService = (function(){
     }//remove
 
 
-    //[4] 댓글수정
+    //[4] 댓글수정 : update
     function update(reply, callback, error){
         console.log("수정할 댓글 RNO : "+reply.rno);
 
@@ -105,7 +91,7 @@ var replyService = (function(){
         });
     }//update
 
-    //[5] 댓글조회
+    //[5] 댓글조회 : get-> 한개 댓글 조회
     function get(rno, callback, error){
 
         //$.get().fail();
@@ -119,7 +105,7 @@ var replyService = (function(){
 
     }//get
 
-    //[6]시간처리
+    //[6]시간처리 : displayTime
     function displayTime(timeValue){
         var today = new Date();
         var gap = today.getTime() - timeValue;
