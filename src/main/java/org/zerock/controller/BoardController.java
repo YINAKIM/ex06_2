@@ -83,9 +83,9 @@ public class BoardController {
         log.info("============== 일단 확인만 ================");
 
         log.info("register : "+ board);
-        //service.register(board);
-        //rttr.addFlashAttribute("result",board.getBno());
-       // rttr.addFlashAttribute("result2",board.getBno());
+        service.register(board);
+        rttr.addFlashAttribute("result",board.getBno());
+     //   rttr.addFlashAttribute("result2",board.getBno());
         return "redirect:/board/list";
     }
         /*

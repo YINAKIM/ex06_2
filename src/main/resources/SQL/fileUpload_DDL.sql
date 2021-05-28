@@ -6,6 +6,13 @@ CREATE TABLE TBL_ATTACH(
     BNO         NUMBER(10,0)
 );
 
+/*
+FILETYPE이 숫자로 알아서 들어감--> 조회할 때나 수정할 때 문제없나 확인할것
+da04234c-7ddd-4f08-a804-2cf475a84f20,2021/05/28,토비의 스프링_초안4.docx, 0 ,426001
+4e1636e7-4514-4e04-8ef4-e26b02b144eb,2021/05/28,iiiii_test.png,         1 ,426001
+
+*/
+
 
 SELECT * FROM TBL_ATTACH;
 

@@ -5,8 +5,11 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.zerock.domain.BoardAttachVO;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.Criteria;
+import org.zerock.mapper.BoardAttachMapper;
 import org.zerock.mapper.BoardMapper;
 import org.zerock.mapper.ReplyMapper;
 
@@ -24,12 +27,37 @@ public class BoardServiceImpl implements BoardService{
     @Setter(onMethod_ = @Autowired)
     private BoardMapper mapper;
 
+    @Setter(onMethod_=@Autowired)
+    private BoardAttachMapper attachMapper; //첨부파일등록용
+
+    @Transactional
     @Override
     public void register(BoardVO board) {
         log.info("register.........."+board);
         mapper.insertSelectKey(board);
         //BoardService는 void register , insertSelectKey는 int 리턴
         // => OK, 필요하다면 예외처리나 int리턴으로 사용가능 : 실행 후 생성된 게시물 벊를 확인할 수 있음
+
+    //--첨부파일 등록 1. null체크
+        if( board.getAttachList() == null || board.getAttachList().size() <= 0 ){
+            return; //첨부파일 없으며면 바로 종료
+        }
+
+    //--첨부파일 등록 2. 등록처리
+        board.getAttachList().forEach(attach -> {
+            attach.setBno(board.getBno());
+            attachMapper.insert(attach);
+        });
+
+/*  @Transactional 처리해둠 : 게시물등록 > 첨부파일 각각등록
+
+    [1] TBL_BOARD(BoardMapper.xml)의 insertSelectKey로 "먼저 게시물 등록"
+    [2] 첨부파일List 없으면 핸들러 종료
+        첨부파일List 있으면 게시물 bno 받아다가 각각 setBno
+    [3] TBL_ATTACH(BoardAttachMapper.xml)의 insert로 첨부파일 "각각" 등록(forEach)
+*/
+
+
     }
 
     @Override
