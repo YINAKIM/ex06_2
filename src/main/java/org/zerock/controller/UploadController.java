@@ -236,7 +236,7 @@ try안에서 할일
     @GetMapping("/display")
     public ResponseEntity<byte[]> getFile(String fileName){
 
-        log.info("썸넬만들 fileName"+fileName);
+        log.info("썸넬만들 fileName ====>     "+fileName);
 
         File file = new File("//Users//kim-yina//Desktop//upload//tmp//"+fileName); // new File객체 (지금 업로드된 파일명 가져와서) 생성
 //        File file = new File("/Users/kim-yina/Desktop/upload/tmp"+fileName); // new File객체 (지금 업로드된 파일명 가져와서) 생성

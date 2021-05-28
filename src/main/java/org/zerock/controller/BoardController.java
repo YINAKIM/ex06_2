@@ -133,11 +133,13 @@ public class BoardController {
         model.addAttribute("board",service.get(bno));
     }
 
-    //게시물 조회 시 첨부파일 조회
+    //게시물 조회 시 첨부파일 조회 : @ResponseBody적용, JSON반환하도록
+    @ResponseBody
     @GetMapping(value = "/getAttachList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno){
-        log.info("첨부파일List 핸들러---getAttachList할 글번호 bno : bno");
+        log.info("첨부파일List 핸들러---getAttachList할 글번호 bno : "+bno);
         return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
+                                    // findByBno(Long bno)로 반환되는 getAttachList
     }
 
 

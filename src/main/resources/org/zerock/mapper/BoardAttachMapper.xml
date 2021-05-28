@@ -15,7 +15,9 @@
         DELETE FROM TBL_ATTACH WHERE UUID = #{uuid}
     </delete>
 
-    <select id="selectByBno" resultType="org.zerock.domain.BoardAttachVO">
+    <select id="findByBno" resultType="org.zerock.domain.BoardAttachVO">
         SELECT * FROM TBL_ATTACH WHERE BNO = #{bno}
     </select>
+
+
 </mapper>

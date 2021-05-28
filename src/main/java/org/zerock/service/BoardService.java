@@ -19,7 +19,7 @@ public interface BoardService {
     // 전체 데이터 수 구하기
     public int getTotal(Criteria cri);
 
-    // 조회페이지 첨부파일 목록 보여주기
+    // 조회페이지 첨부파일 목록 보여주기 : findByBno
     public List<BoardAttachVO> getAttachList(Long bno);
 
 }

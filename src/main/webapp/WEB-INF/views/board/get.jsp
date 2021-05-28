@@ -20,6 +20,9 @@
     <!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
+
+
+<%-- 게시물 보여지는 div --%>
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
@@ -99,6 +102,8 @@
                 <!-- /.modal -->
 
 <%--  모달창 :e  --%>
+
+
 
 
                 <script type="text/javascript" src="/resources/js/reply.js"></script>
@@ -385,6 +390,90 @@
                     });
                 </script>
 
+
+
+                <%-- 첨부파일 script
+                1. 일단 getJSON으로 첨부파일 목록 가져오는거 크롬에서 확인
+                2. 1이 OK면 첨부파일 각각 이미지는 썸네일로,
+                                     일반파일은 파일아이콘으로 화면에 보이게 처리
+                3. 1,2 둘다OK면 파일 각각의 liObj를 클릭했을 때 이미지는 크게보이게하고 다운로드
+                                                       일반파일은 다운로드
+
+                --%>
+                <script>
+                    $(document).ready(function(){
+                        (function () {
+                            var bno = '<c:out value="${board.bno}"/>';
+
+                            $.getJSON(
+                                "/board/getAttachList", {bno : bno}, function(arr){ //1번 OK
+                                    console.log(arr);
+
+                                    var str = "";
+                                    $(arr).each(function(i,attach){
+
+
+                                        //each1. image파일일 때 : attach.fileType이 true
+                                        if(attach.fileType){
+                                            var fileCallPath = encodeURIComponent( attach.uploadPath +"/s_"+ attach.uuid +"_"+ attach.fileName); //이미지니까 썸넬가져옴
+
+                                            str += "<li data-path='"+ attach.uploadPath +"' data-uuid='"+ attach.uuid +"' data-filename='"+ attach.fileName +"' data-type='"+ attach.fileType +"'>";
+                                            str += "<div><img src='/display?fileName="+ fileCallPath +"'></div></li>";
+
+
+                                        //each2. 일반파일일 때 : attach.fileType이 false
+                                        }else{
+                                            str += "<li data-path='"+ attach.uploadPath +"' data-uuid='"+ attach.uuid +"' data-filename='"+ attach.fileName +"' data-type='"+ attach.fileType +"'>";
+                                            str += "<div><span>"+ attach.fileName +"</span><br><img src='/resources/img/attach.png'></div></li>";
+                                        }
+                                    });//each
+                                    $(".uploadResult ul").html(str);
+
+                            });//getJSON : 2번 OK
+
+
+                        })(); //end function
+
+                        //클릭하면 보여주기
+                        $(".uploadResult").on("click","li",function(e){
+                            console.log("첨부이미지 보여주기");
+
+                            var liObj = $(this);
+
+                            var path = encodeURIComponent( liObj.data("path") +"/"+ liObj.data("uuid") +"_"+ liObj.data("filename"));
+
+                            if(liObj.data("type")){
+                                console.log("이미지보여주기");
+                                showImage(path.replace(new RegExp(/\\/g),"/")); ///-------> 이미지 크게보여주는거만 안됨
+                            }else{
+                                //다운로드
+                                self.location = "/download?fileName="+path; // 경로 붙고 인코드된 URI컴포넌트
+                            }//
+                        });//li각각 클릭하면 : 3번
+
+                        function showImage(fileCallPath){
+                           // alert(fileCallPath+"*****");
+                            $(".bigPictureWrapper").css("display","flex").show();
+
+                            $(".bigPicture")
+                                .html("<img src='/display?fileName="+fileCallPath+"'>")
+                                .animate({width:'100%', height:'100%'},1000);
+
+                            //클릭하면 닫기
+                            $(".bigPictureWrapper").on("click",function(e){
+                                $(".bigPicture").animate({width:'0%', height:'0%'},500);
+                                setTimeout(function(){
+                                   $(".bigPictureWrapper").hide();
+                                },1000);
+                            });
+                        }
+
+
+
+                    });//ready 첨부파일
+                </script>
+                <%-- 첨부파일 script : e --%>
+
                         <%-- 번호로 조회 : 반드시 모든 input을 readonly="readonly"로 속성지정 --%>
 
                         <%-- BNO --%>
@@ -429,7 +518,82 @@
 
                     </div>
 
-                   <%-- 댓글창 div --%>
+
+                    <style>
+                        .uploadResult {
+                            width:100%;
+                            background-color: gray;
+                        }
+                        .uploadResult ul{
+                            display:flex;
+                            flex-flow: row;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                        .uploadResult ul li {
+                            list-style: none;
+                            padding: 10px;
+                            align-content: center;
+                            text-align: center;
+                        }
+                        .uploadResult ul li img{
+                            width: 100px;
+                        }
+                        .uploadResult ul li span {
+                            color:white;
+                        }
+                        .bigPictureWrapper {
+                            position: absolute;
+                            display: none;
+                            justify-content: center;
+                            align-items: center;
+                            top:0%;
+                            width:100%;
+                            height:100%;
+                            background-color: gray;
+                            z-index: 100;
+                            background:rgba(255,255,255,0.5);
+                        }
+                        .bigPicture {
+                            position: relative;
+                            display:flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        .bigPicture img {
+                            width:600px;
+                        }
+
+                    </style>
+                <%--  첨부 "image" 파일 보여줄 div  --%>
+                    <div class="bigPictureWrapper">
+                        <div class="bigPicture"></div>
+                    </div>
+                <%--  첨부 "image" 파일 보여줄 div :e --%>
+                <%--  첨부파일 보여줄 div  --%>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+
+                            <div class="panel-heading">첨부 Files</div>
+                            <%--panel 헤딩--%>
+
+                            <div class="panel-body">
+                                <div class="uploadResult">
+                                    <ul>
+                                    <%--첨부파일 목록 li 들어올 --%>
+                                    </ul>
+                                </div>
+                            </div><%--panel-body : e--%>
+                        </div><%--panel-heading : e--%>
+                    </div><%--col-lg-12 : e--%>
+                </div><%-- row : e--%>
+                <%--  첨부파일 보여줄 div:e  --%>
+
+
+
+                <%-- 댓글창 div --%>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="panel panel-default">

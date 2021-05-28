@@ -15,7 +15,8 @@
 <!-- /#wrapper -->
 
 <!-- jQuery -->
-<%--<script src="/resources/vendor/jquery/jquery.min.js"></script>  p.233 에서 header.jsp로 옮김, 메뉴바에 적용될 스크립트 직접작성--%>
+<%--<script src="/resources/vendor/jquery/jquery.min.js"></script>
+  p.233 에서 header.jsp로 옮김, 메뉴바에 적용될 스크립트 직접작성--%>
 
 
 

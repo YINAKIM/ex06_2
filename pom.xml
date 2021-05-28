@@ -254,7 +254,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.8.5</version>
+      <version>2.9.5</version>
     </dependency>
 
     <!--  gson : 테스트할 때 Java인스턴스를 JSON타입의 문자열로 변환할 때 필요  -->
