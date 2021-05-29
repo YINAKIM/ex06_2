@@ -46,7 +46,7 @@
         display: none;
         justify-content: center;
         align-items: center;
-        top: 0%;
+        topoperation: 0%;
         width: 100%;
         height: 100%;
         background-color: gray;
@@ -120,7 +120,7 @@
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)"); // 특정 확장자 지정해서 제한 : exe,sh,zip,alz 업로드막기
         var maxSize = 524880;   // 5MB이상 업로드막기
 
-<% %>
+
         function checkExtension(fileName, fileSize){
 
             if(regex.test(fileName)){

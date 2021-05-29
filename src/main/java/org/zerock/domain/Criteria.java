@@ -3,6 +3,7 @@ package org.zerock.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Getter
 @Setter
@@ -33,8 +34,18 @@ public class Criteria {
     }
 
     // 게시물 삭제작업 후, 페이지번호 + 검색조건 유지하면서 이동하려면 redirect로 뒤에 파라미터 연결해야되서 불편
-    // ---> getListLink()만들어서 한번에 처리 : UriComponentsBuilder
+    // ---> getListLink()만들어서 한번에 처리 : UriComponentsBuilder 브라우저에서 GET방식 등의 파라미터 전송에 사용되는 문자열을 손쉽게 처리할 수 있도록 하는 클래스
 
+
+    public String getListLink(){
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+                .queryParam("pageNum",pageNum)
+                .queryParam("amount",amount)
+                .queryParam("type",type)
+                .queryParam("keyword",this.getKeyword());
+        return builder.toUriString();
+    }
 
 
 

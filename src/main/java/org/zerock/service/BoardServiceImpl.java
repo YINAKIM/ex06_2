@@ -66,16 +66,35 @@ public class BoardServiceImpl implements BoardService{
         return mapper.read(bno);
     }
 
+    @Transactional
     @Override
     public boolean modify(BoardVO board) {
         log.info("modify......"+board);
-        return mapper.update(board) == 1;       //  삭제/수정은 void로 설계할 수 도 있지만 성공여부를 정확히 처리하기 위해 boolean으로
+    /*** 첨부파일 수정처리 : 기존첨부파일 관련 데이터 전부 삭제 > 다시 첨부파일 데이터 추가 ---> @Transactional 처리 ***/
+        attachMapper.deleteAll(board.getBno());
+
+        log.info( "수정할 파일목록은?? "+board.getAttachList() );
+        boolean modifyResult = mapper.update(board) == 1;
+        if( modifyResult && board.getAttachList() != null
+                             && board.getAttachList().size() > 0){
+
+            log.info( "if들어옴------------첨부파일이 있다는 뜻"  );
+            log.info( "첨부파일 있고, 수정할 파일목록은?? "+board.getAttachList() );
+            board.getAttachList().forEach(attach -> {
+                attach.setBno(board.getBno());
+                attachMapper.insert(attach);
+            });
+        }
+    /*** 첨부파일 수정처리 : 기존첨부파일 관련 데이터 전부 삭제 > 다시 첨부파일 데이터 추가 ---> @Transactional 처리 ***/
+
+        log.info(modifyResult);
+        return modifyResult; //첨부파일 삭제 후 > 게시글 전체 정보(새로운 파일목록포함) > update처리까지 된 modifyResult
     }
 
     @Transactional
     @Override
     public boolean remove(Long bno) {
-        log.info("remove......"+bno);
+        log.info("여기서 deleteAll이랑 delete랑 같이함 remove......"+bno);
 
         //게시글삭제 시 첨부파일 같이 삭제 : @Transactional처리
         // 삭제요청 > 첨부파일 먼저 삭제 > 게시글 삭제

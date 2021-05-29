@@ -16,6 +16,9 @@ import org.zerock.domain.Criteria;
 import org.zerock.domain.PageDTO;
 import org.zerock.service.BoardService;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -169,22 +172,28 @@ public class BoardController {
     @PostMapping("/remove")
     public String remove(@RequestParam("bno")Long bno, RedirectAttributes rttr,@ModelAttribute("cri") Criteria cri){
         log.info("remove............"+bno);
-        if(service.remove(bno)){
+
+        //첨부파일 삭제작업 ㅎㅏ려고 파일목록 조회
+        List<BoardAttachVO> attachList = service.getAttachList(bno);
+
+        if(service.remove(bno)){ // 1. 게시글먼저삭제 -> executeUpdate로 성공하면 1반환( =true)
+            deleteFiles(attachList);    //2. [1]이 성공했으면 첨부파일 삭제
             rttr.addFlashAttribute("result","success");
 
             //삭제 후 페이지 이동이 필요하므로 RedirectAttributes rttr 사용
         }
 
 
-        //왔던 페이지번호로 돌아가기 위해 받아온 Criteria 필드들
+        // 삭제완료 후 redirect될 때  왔던 페이지번호로 돌아가기 위해 받아온 Criteria 필드들
         rttr.addAttribute("pageNum",cri.getPageNum());
         rttr.addAttribute("amount",cri.getAmount());
 
-        // 검색조건도 담아줘야됨
+        // 삭제완료 후 redirect될 때 검색조건도 담아줘야됨
         rttr.addAttribute("type",cri.getType());
         rttr.addAttribute("keyword",cri.getKeyword());
 
-        return "redirect:/board/list";
+
+        return "redirect:/board/list"+cri.getListLink();
     }
 
     /*
@@ -196,4 +205,61 @@ public class BoardController {
 
         redirect시 RedirectAttributes 클래스를 이용해 효과적으로 alert창을 띄울수도 있다.
     */
+
+    //첨부파일 삭제
+    public void deleteFiles(List<BoardAttachVO> attachList){
+        if( attachList == null || attachList.size() == 0 ){
+            return;
+        }
+        log.info("::::첨부 파일 목록::::"+attachList);
+        log.info("첨부파일 삭제.............................................");
+
+        attachList.forEach(attach -> {
+            try{
+                Path file = Paths.get(
+                    "/Users/kim-yina/Desktop/upload/tmp/" + attach.getUploadPath()
+                    +"/"+attach.getUuid()
+                    +"_"+attach.getFileName()
+                );
+/*
+윈도우만 역슬래시 아니....파일저장은 걍 하던데 삭제할 때는 따지는거야???            +"\\"+attach.getUuid()
+INFO : org.zerock.controller.BoardController - ::::첨부 파일 목록::::[BoardAttachVO(uuid=93a1f0fc-885c-40d5-b9de-6c83c5865246,
+                                                                                uploadPath=2021/05/29,
+                                                                                fileName=0527회의.docx,
+                                                                                fileType=false, bno=426011),
+                                                                                BoardAttachVO(uuid=f8b1e657-6619-4c86-b944-7c0ace459d2b,
+                                                                                uploadPath=2021/05/29,
+                                                                                fileName=iiiii_test.png, fileType=true, bno=426011)]
+INFO : org.zerock.controller.BoardController - 첨부파일 삭제.............................................
+INFO : org.zerock.controller.BoardController - 원본파일 ))))))))))  /Users/kim-yina/Desktop/upload/tmp/2021/05/29\93a1f0fc-885c-40d5-b9de-6c83c5865246_0527회의.docx
+INFO : org.zerock.controller.BoardController - 원본파일 ))))))))))  /Users/kim-yina/Desktop/upload/tmp/2021/05/29\f8b1e657-6619-4c86-b944-7c0ace459d2b_iiiii_test.png
+INFO : org.zerock.controller.BoardController - /Users/kim-yina/Desktop/upload/tmp/2021/05/29/s_f8b1e657-6619-4c86-b944-7c0ace459d2b_iiiii_test.png
+*/
+                log.info("원본파일 ))))))))))  "+file);
+                Files.deleteIfExists(file);
+
+                // 이미지파일이면 : Context-Type이 "image/~"
+                if( Files.probeContentType(file).startsWith("image") ){
+                    Path thumbnail = Paths.get(
+                            "/Users/kim-yina/Desktop/upload/tmp/" + attach.getUploadPath()
+                                    +"/s_"+attach.getUuid()
+                                    +"_"+attach.getFileName()
+                    );
+
+                    log.info(thumbnail);
+                    Files.delete(thumbnail);
+                }
+
+            }catch(Exception e){
+                //log.info("info 레벨) 파일삭제중 Exception!!"+e.getMessage());
+                log.error("error 레벨) 파일삭제중 Exception!!"+e.getMessage());
+                e.printStackTrace();
+            }//catch
+        });//forEach끝
+
+    }//deleteFiles
+
+
+
+
 }
