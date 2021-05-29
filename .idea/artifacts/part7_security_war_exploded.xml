@@ -1,17 +1,17 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="part6_ex05:war exploded">
+  <artifact type="exploded-war" name="part7_security:war exploded">
     <output-path>$PROJECT_DIR$/target/ex04</output-path>
     <properties id="maven-jee-properties">
       <options>
         <exploded>true</exploded>
-        <module>part6_ex05</module>
+        <module>part7_security</module>
         <packaging>war</packaging>
       </options>
     </properties>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="part6_ex05" />
+          <element id="module-output" name="part7_security" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: org.springframework:spring-context:5.0.7.RELEASE" />
@@ -86,12 +86,17 @@
           <element id="library" level="project" name="Maven: com.mchange:mchange-commons-java:0.2.11" />
           <element id="library" level="project" name="Maven: com.zaxxer:HikariCP-java6:2.3.13" />
           <element id="library" level="project" name="Maven: org.quartz-scheduler:quartz-jobs:2.3.0" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:5.0.7.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:5.0.7.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:5.0.7.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:5.0.7.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:5.0.7.RELEASE" />
         </element>
       </element>
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/target/ex04/META-INF/MANIFEST.MF" />
       </element>
-      <element id="javaee-facet-resources" facet="part6_ex05/web/Web" />
+      <element id="javaee-facet-resources" facet="part7_security/web/Web" />
     </root>
   </artifact>
 </component>
