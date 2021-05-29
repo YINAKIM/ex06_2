@@ -32,4 +32,6 @@ bno = 426016
 
 */
 
-
+SELECT *
+FROM TBL_ATTACH
+WHERE UPLOADPATH = TO_CHAR(SYSDATE-1, 'yyyy\mm\dd');

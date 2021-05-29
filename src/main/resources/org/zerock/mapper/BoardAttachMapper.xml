@@ -23,5 +23,11 @@
         DELETE TBL_ATTACH WHERE BNO = #{bno}
     </delete>
 
+    <select id="getOldFiles" resultType="org.zerock.domain.BoardAttachVO">
+        SELECT *
+          FROM TBL_ATTACH
+         WHERE UPLOADPATH = TO_CHAR(SYSDATE-1, 'yyyy/mm/dd')
+    </select>
+
 
 </mapper>

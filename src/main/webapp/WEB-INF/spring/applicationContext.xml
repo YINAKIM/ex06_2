@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring
-       http://mybatis.org/schema/mybatis-spring-1.2.xsd
+        http://mybatis.org/schema/mybatis-spring-1.2.xsd
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -15,7 +15,9 @@
         http://www.springframework.org/schema/aop
         https://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!-- Root Context: defines shared resources visible to all other web components
       Root Context : 웹서버가 각 property들을 찾을 수 있게 하는 componant-scan의 시작점 -->
@@ -44,6 +46,8 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
+
+
     <!--  어노테이션기반으로 트랜잭션을 설정할 수 있도록 하는 태그-->
     <tx:annotation-driven></tx:annotation-driven>
 
@@ -61,5 +65,7 @@
      xmlns:aop = "http://www.springframework.org/schema/aop" : beans에 다 들어가있다고함
     -->
     <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+
 
 </beans>

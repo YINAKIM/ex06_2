@@ -277,6 +277,23 @@
         <version>2.4.3</version>
       </dependency>
 
+<!-- 첨부파일 Ajax로 등록/수정시, submit 없이 비정상적으로 종료되거나 페이지 이동할 경우 생기는 문제를 방지하기 위해
+ 주기적으로 DB와 폴더를 확인하는 작업 해야되는데,
+ 주기적으로 동작해야하므로 스케줄링할 때 필요한 라이브러리 이용 : Spring-Batch 또는 Quartz-->
+    <!-- Quartz : quartz, quartz-job 같이 있어야함 -->
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz-jobs</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+
+
+
   </dependencies>
 
 
