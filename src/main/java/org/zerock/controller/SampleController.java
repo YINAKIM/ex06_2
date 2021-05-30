@@ -20,7 +20,6 @@ import java.util.stream.IntStream;
 @Log4j
 public class SampleController {
 
-
     // produces = "MIME 타입(보내는 자원의 Content-Type) 지정"  ---> 생략가능
     @GetMapping(value = "/getText",produces = "text/plain; charset=UTF-8")
     public String getText(){

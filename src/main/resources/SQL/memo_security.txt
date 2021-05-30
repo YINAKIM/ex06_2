@@ -1,0 +1,25 @@
+/samle/member
+접근했을 때 로그확인 :  Access is denied 하고 내가안만들었는데 /login 으로 넘어감 -> 스프링시큐리티가 기본적으로 제공하는 페이지 (실제로는 따로 제작해서 면)
+
+로그인화면은 기본제공해주지만 로그인 기능은 없는상태 -> 추가설정으로 지정된 id, pw로 로그인하게 해줘야함
+
+[사용자 정보 관련 알아둘 내용]
+* 일반시스템에서 userid는 스프링시쿠리티에서 username
+* 스프링시큐리티에서 User는 [인증정보 + 권한 을 가진 객체] ---> 일반적인 사용자 정보와는 다른의미
+(-> 예제소스에서는 구분을 위해 회원정보는 memberVO이용 )
+
+*인증과 권한에 대한 실제 처리는 UserDetailsService를 이용한다.
+
+--------------------------------------------------------
+PasswordEncoder지정해서 사용해야됨 (스프링5)
+http://spring.io/blog/2017/11/01/spring-security-5-0-0-rcl-released#password-storage-format ---> 404뜸, p622
+
+근데 PasswordEncoder 안쓰려면 (패스워드 인코딩 처리 안하면) : {noop}사용하면댐
+     <security:user name="member"  password="{noop}member" authorities="ROLE_MEMBER"/>
+
+DEBUG: org.springframework.security.web.header.writers.HstsHeaderWriter
+- Not injecting HSTS header since it did not match the requestMatcher
+org.springframework.security.web.header.writers.HstsHeaderWriter
+
+
+백지로나옴...근데 network는 200OK 로 나옴 -> PasswordEncoder는 {noop}으로 인코딩없이 들어간건데...

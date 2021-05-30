@@ -1,0 +1,153 @@
+/sample/all
+접근했을 때 로그 확인
+
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 1 of 12 in additional filter chain; firing Filter: 'SecurityContextPersistenceFilter'
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - HttpSession returned null object for SPRING_SECURITY_CONTEXT
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - No SecurityContext was available from the HttpSession: org.apache.catalina.session.StandardSessionFacade@7f3b4669. A new one will be created.
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 2 of 12 in additional filter chain; firing Filter: 'WebAsyncManagerIntegrationFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 3 of 12 in additional filter chain; firing Filter: 'HeaderWriterFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 4 of 12 in additional filter chain; firing Filter: 'CsrfFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 5 of 12 in additional filter chain; firing Filter: 'UsernamePasswordAuthenticationFilter'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Request 'GET /sample/all' doesn't match 'POST /login
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 6 of 12 in additional filter chain; firing Filter: 'DefaultLoginPageGeneratingFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 7 of 12 in additional filter chain; firing Filter: 'RequestCacheAwareFilter'
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - pathInfo: both null (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - queryString: both null (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - requestURI: arg1=/sample/member; arg2=/sample/all (property not equals)
+DEBUG: org.springframework.security.web.savedrequest.HttpSessionRequestCache - saved request doesn't match
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 8 of 12 in additional filter chain; firing Filter: 'SecurityContextHolderAwareRequestFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 9 of 12 in additional filter chain; firing Filter: 'AnonymousAuthenticationFilter'
+DEBUG: org.springframework.security.web.authentication.AnonymousAuthenticationFilter - Populated SecurityContextHolder with anonymous token: 'org.springframework.security.authentication.AnonymousAuthenticationToken@fa7809fc: Principal: anonymousUser; Credentials: [PROTECTED]; Authenticated: true; Details: org.springframework.security.web.authentication.WebAuthenticationDetails@fffde5d4: RemoteIpAddress: 0:0:0:0:0:0:0:1; SessionId: B3DDDEE6AF7DFC421FD0D53EB69E2D43; Granted Authorities: ROLE_ANONYMOUS'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 10 of 12 in additional filter chain; firing Filter: 'SessionManagementFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 11 of 12 in additional filter chain; firing Filter: 'ExceptionTranslationFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all at position 12 of 12 in additional filter chain; firing Filter: 'FilterSecurityInterceptor'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Checking match of request : '/sample/all'; against '/sample/all'
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Secure object: FilterInvocation: URL: /sample/all; Attributes: [permitAll]
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Previously Authenticated: org.springframework.security.authentication.AnonymousAuthenticationToken@fa7809fc: Principal: anonymousUser; Credentials: [PROTECTED]; Authenticated: true; Details: org.springframework.security.web.authentication.WebAuthenticationDetails@fffde5d4: RemoteIpAddress: 0:0:0:0:0:0:0:1; SessionId: B3DDDEE6AF7DFC421FD0D53EB69E2D43; Granted Authorities: ROLE_ANONYMOUS
+DEBUG: org.springframework.security.access.vote.AffirmativeBased - Voter: org.springframework.security.web.access.expression.WebExpressionVoter@3b12730b, returned: 1
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Authorization successful
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - RunAsManager did not change Authentication object
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/all reached end of additional filter chain; proceeding with original chain
+INFO : org.zerock.controller.SampleController - do /////all///// can access everybody
+DEBUG: org.springframework.security.web.access.ExceptionTranslationFilter - Chain processed normally
+DEBUG: org.springframework.security.web.header.writers.HstsHeaderWriter - Not injecting HSTS header since it did not match the requestMatcher org.springframework.security.web.header.writers.HstsHeaderWriter$SecureRequestMatcher@22699c7b
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - SecurityContext is empty or contents are anonymous - context will not be stored in HttpSession.
+DEBUG: org.springframework.security.web.context.SecurityContextPersistenceFilter - SecurityContextHolder now cleared, as request processing completed
+
+
+
+
+
+/sample/member
+접근했을 때 로그확인 :  Access is denied 하고 내가안만들었는데 /login 으로 넘어감 -> 스프링시큐리티가 기본적으로 제공하는 페이지 (실제로는 따로 제작해서 면)
+
+
+
+DEBUG: com.zaxxer.hikari.pool.HikariPool - Before cleanup pool stats HikariPool-0 (total=10, inUse=0, avail=10, waiting=0)
+DEBUG: com.zaxxer.hikari.pool.HikariPool - After cleanup pool stats HikariPool-0 (total=10, inUse=0, avail=10, waiting=0)
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 1 of 12 in additional filter chain; firing Filter: 'SecurityContextPersistenceFilter'
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - HttpSession returned null object for SPRING_SECURITY_CONTEXT
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - No SecurityContext was available from the HttpSession: org.apache.catalina.session.StandardSessionFacade@7f3b4669. A new one will be created.
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 2 of 12 in additional filter chain; firing Filter: 'WebAsyncManagerIntegrationFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 3 of 12 in additional filter chain; firing Filter: 'HeaderWriterFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 4 of 12 in additional filter chain; firing Filter: 'CsrfFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 5 of 12 in additional filter chain; firing Filter: 'UsernamePasswordAuthenticationFilter'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Request 'GET /sample/member' doesn't match 'POST /login
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 6 of 12 in additional filter chain; firing Filter: 'DefaultLoginPageGeneratingFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 7 of 12 in additional filter chain; firing Filter: 'RequestCacheAwareFilter'
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - pathInfo: both null (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - queryString: both null (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - requestURI: arg1=/sample/member; arg2=/sample/member (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - serverPort: arg1=8001; arg2=8001 (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - requestURL: arg1=http://localhost:8001/sample/member; arg2=http://localhost:8001/sample/member (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - scheme: arg1=http; arg2=http (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - serverName: arg1=localhost; arg2=localhost (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - contextPath: arg1=; arg2= (property equals)
+DEBUG: org.springframework.security.web.savedrequest.DefaultSavedRequest - servletPath: arg1=/sample/member; arg2=/sample/member (property equals)
+DEBUG: org.springframework.security.web.savedrequest.HttpSessionRequestCache - Removing DefaultSavedRequest from session if present
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 8 of 12 in additional filter chain; firing Filter: 'SecurityContextHolderAwareRequestFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 9 of 12 in additional filter chain; firing Filter: 'AnonymousAuthenticationFilter'
+DEBUG: org.springframework.security.web.authentication.AnonymousAuthenticationFilter - Populated SecurityContextHolder with anonymous token: 'org.springframework.security.authentication.AnonymousAuthenticationToken@fa7809fc: Principal: anonymousUser; Credentials: [PROTECTED]; Authenticated: true; Details: org.springframework.security.web.authentication.WebAuthenticationDetails@fffde5d4: RemoteIpAddress: 0:0:0:0:0:0:0:1; SessionId: B3DDDEE6AF7DFC421FD0D53EB69E2D43; Granted Authorities: ROLE_ANONYMOUS'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 10 of 12 in additional filter chain; firing Filter: 'SessionManagementFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 11 of 12 in additional filter chain; firing Filter: 'ExceptionTranslationFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /sample/member at position 12 of 12 in additional filter chain; firing Filter: 'FilterSecurityInterceptor'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Checking match of request : '/sample/member'; against '/sample/all'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Checking match of request : '/sample/member'; against '/sample/member'
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Secure object: FilterInvocation: URL: /sample/member; Attributes: [hasRole('ROLE_MEMBER')]
+DEBUG: org.springframework.security.web.access.intercept.FilterSecurityInterceptor - Previously Authenticated: org.springframework.security.authentication.AnonymousAuthenticationToken@fa7809fc: Principal: anonymousUser; Credentials: [PROTECTED]; Authenticated: true; Details: org.springframework.security.web.authentication.WebAuthenticationDetails@fffde5d4: RemoteIpAddress: 0:0:0:0:0:0:0:1; SessionId: B3DDDEE6AF7DFC421FD0D53EB69E2D43; Granted Authorities: ROLE_ANONYMOUS
+DEBUG: org.springframework.security.access.vote.AffirmativeBased - Voter: org.springframework.security.web.access.expression.WebExpressionVoter@3b12730b, returned: -1
+DEBUG: org.springframework.security.web.access.ExceptionTranslationFilter - Access is denied (user is anonymous); redirecting to authentication entry point
+org.springframework.security.access.AccessDeniedException: Access is denied
+	at org.springframework.security.access.vote.AffirmativeBased.decide(AffirmativeBased.java:84)
+	at org.springframework.security.access.intercept.AbstractSecurityInterceptor.beforeInvocation(AbstractSecurityInterceptor.java:233)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:124)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:91)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:137)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:111)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:170)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter.doFilter(DefaultLoginPageGeneratingFilter.java:206)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:200)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.csrf.CsrfFilter.doFilterInternal(CsrfFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:334)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:215)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:178)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:357)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:270)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:687)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1707)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Request '/sample/member' matched by universal pattern '/**'
+DEBUG: org.springframework.security.web.savedrequest.HttpSessionRequestCache - DefaultSavedRequest added to Session: DefaultSavedRequest[http://localhost:8001/sample/member]
+DEBUG: org.springframework.security.web.access.ExceptionTranslationFilter - Calling Authentication entry point.
+DEBUG: org.springframework.security.web.DefaultRedirectStrategy - Redirecting to 'http://localhost:8001/login'
+DEBUG: org.springframework.security.web.header.writers.HstsHeaderWriter - Not injecting HSTS header since it did not match the requestMatcher org.springframework.security.web.header.writers.HstsHeaderWriter$SecureRequestMatcher@22699c7b
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - SecurityContext is empty or contents are anonymous - context will not be stored in HttpSession.
+DEBUG: org.springframework.security.web.context.SecurityContextPersistenceFilter - SecurityContextHolder now cleared, as request processing completed
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 1 of 12 in additional filter chain; firing Filter: 'SecurityContextPersistenceFilter'
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - HttpSession returned null object for SPRING_SECURITY_CONTEXT
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - No SecurityContext was available from the HttpSession: org.apache.catalina.session.StandardSessionFacade@7f3b4669. A new one will be created.
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 2 of 12 in additional filter chain; firing Filter: 'WebAsyncManagerIntegrationFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 3 of 12 in additional filter chain; firing Filter: 'HeaderWriterFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 4 of 12 in additional filter chain; firing Filter: 'CsrfFilter'
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 5 of 12 in additional filter chain; firing Filter: 'UsernamePasswordAuthenticationFilter'
+DEBUG: org.springframework.security.web.util.matcher.AntPathRequestMatcher - Request 'GET /login' doesn't match 'POST /login
+DEBUG: org.springframework.security.web.FilterChainProxy - /login at position 6 of 12 in additional filter chain; firing Filter: 'DefaultLoginPageGeneratingFilter'
+DEBUG: org.springframework.security.web.header.writers.HstsHeaderWriter - Not injecting HSTS header since it did not match the requestMatcher org.springframework.security.web.header.writers.HstsHeaderWriter$SecureRequestMatcher@22699c7b
+DEBUG: org.springframework.security.web.context.HttpSessionSecurityContextRepository - SecurityContext is empty or contents are anonymous - context will not be stored in HttpSession.
+DEBUG: org.springframework.security.web.context.SecurityContextPersistenceFilter - SecurityContextHolder now cleared, as request processing completed
+

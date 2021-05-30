@@ -9,7 +9,29 @@
 
 
     <security:http>
+        <!-- security:intercept-url => 특정 URI접근시 인터셉터를 이용하여 접근제한
+             pattern속성 : URI패턴 지정
+             access속성 : 권한체크
+             access속성 값 지정하는 2가지 방법
+             1. 표현식이용 : <security:http>의 기본설정방법 ,
+             2. 문자열 이용  : 만약 [2. 문자열]방법으로 하고싶으면 use-expression="false"지정할 것, 그리고 이방법으로 하면 JSP에서 처리할 때 방법이 다름
+             -->
+        <security:intercept-url pattern="/sample/all" access="permitAll"/>
+        <security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+
         <security:form-login/>
+
     </security:http>
-    <security:authentication-manager/>
+
+
+
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="member"  password="{noop}member" authorities="ROLE_MEMBER"/>
+                                                                <!-- ROLE_MEMBER 라는 권한을 가진 member라는 계정을 가진 (memberVO이용) 객체 생성-->
+
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
 </beans>
