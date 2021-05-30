@@ -7,8 +7,11 @@
         http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+<!--직접 만든 접근제한 핸들러 : security:http안에 ref로 참조-->
+    <bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
 
-    <security:http>
+                                    <!--특정URI를 직접 직접지정 or AccessDeniedHandler를 직접 구현-->
+    <security:http auto-config="true" use-expressions="true">
         <!-- security:intercept-url => 특정 URI접근시 인터셉터를 이용하여 접근제한
              pattern속성 : URI패턴 지정
              access속성 : 권한체크
@@ -20,7 +23,12 @@
         <security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
         <security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 
-        <security:form-login/>
+        <security:form-login login-page="/customLogin"/>
+<!--        <security:form-login/>-->
+
+        <security:access-denied-handler ref="customAccessDenied"/>
+<!--        <security:access-denied-handler error-page="/accessError"/>
+            error-page, ref 둘중하나만 사용-->
 
     </security:http>
 
