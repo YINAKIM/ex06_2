@@ -18,6 +18,7 @@
              -->
         <security:intercept-url pattern="/sample/all" access="permitAll"/>
         <security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+        <security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 
         <security:form-login/>
 
@@ -29,8 +30,15 @@
         <security:authentication-provider>
             <security:user-service>
                 <security:user name="member"  password="{noop}member" authorities="ROLE_MEMBER"/>
-                                                                <!-- ROLE_MEMBER 라는 권한을 가진 member라는 계정을 가진 (memberVO이용) 객체 생성-->
+                                                                <!-- ROLE_MEMBER 라는 권한을 가진 member라는 계정-->
 
+                <security:user name="admin"  password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+                                                                    <!-- MEMBER와 ADMIN : 2가지 권한 설정 - /sample/member와 /sample/admin 둘다 접근가능
+                                                                         만약 member계정인 사용자가 /admin에 접근하려고 하면 403(Forbidden:금지됨, 서버가 요청을 이해했으나 승인을 거부합니다.) 메세지 보게됨
+                                                                         DEBUG: org.springframework.security.web.access.ExceptionTranslationFilter - Access is denied (user is not anonymous); delegating to AccessDeniedHandler
+                                                                         org.springframework.security.access.AccessDeniedException: Access is denied
+
+                                                                          -->
             </security:user-service>
         </security:authentication-provider>
     </security:authentication-manager>
