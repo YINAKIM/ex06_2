@@ -7,10 +7,14 @@
         http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<!--직접 만든 접근제한 핸들러 : security:http안에 ref로 참조-->
+    <!--직접 만든 접근제한 핸들러 : security:http안에 ref로 참조-->
     <bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
 
-                                    <!--특정URI를 직접 직접지정 or AccessDeniedHandler를 직접 구현-->
+    <!-- 권한 별 로그인 후처리 해주는 CustomLoginSuccessHandler 를 빈으로 등록 -->
+    <bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+
+
+
     <security:http auto-config="true" use-expressions="true">
         <!-- security:intercept-url => 특정 URI접근시 인터셉터를 이용하여 접근제한
              pattern속성 : URI패턴 지정
@@ -19,16 +23,25 @@
              1. 표현식이용 : <security:http>의 기본설정방법 ,
              2. 문자열 이용  : 만약 [2. 문자열]방법으로 하고싶으면 use-expression="false"지정할 것, 그리고 이방법으로 하면 JSP에서 처리할 때 방법이 다름
              -->
+
+
+        <!-- role별로 인터셉팅할 url -->
         <security:intercept-url pattern="/sample/all" access="permitAll"/>
         <security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
         <security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
 
-        <security:form-login login-page="/customLogin"/>
-<!--        <security:form-login/>-->
+        <!-- 로그인페이지 -->
+        <!-- 로그인 성공 후처리 핸들러 : 권한 별로 지정한 페이지로 redirect해줌 -->
+        <security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
 
+        <!-- 접근제한 핸들러 -->
         <security:access-denied-handler ref="customAccessDenied"/>
-<!--        <security:access-denied-handler error-page="/accessError"/>
-            error-page, ref 둘중하나만 사용-->
+<!--        <security:access-denied-handler error-page="/accessError"/> : error-page, ref 둘중하나만 사용-->
+
+        <!-- CSRF 토큰 활성화 : true가 기본값  -->
+<!--        <security:csrf disabled="true"/>-->
+
+<!--        -->
 
     </security:http>
 
