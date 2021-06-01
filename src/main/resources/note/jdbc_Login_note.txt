@@ -1,0 +1,92 @@
+JDBC를 이용하는 간편 인증/권한 처리 - 마이바티스없이 찐JDBC
+
+jdbc-user-service는 기본적으로 DataSource가 필요
+1) 지정된형식으로 테이블생성해서 사용하는 방법
+=>  security_user_format_DDL.sql 에 스프링시큐리티에 지정된 포맷으로 user,authorities테이블 만들고 사용자정보 넣었음
+
+
+
+
+[[[ 이 전에 쓰던 security-context.xml설정 ]]]
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="member"  password="{noop}member" authorities="ROLE_MEMBER"/>
+                <security:user name="admin"  password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+이건 DB없이 그냥 InMemoryUserDatailsmanager이용해서 테스트 했던것,
+
+
+[[[ jdbc-user-service 이용하기 위해 ]]]
+DB에 시큐리티 형식에 맞는 DDL로 USERS, AUTHORITIES테이블 만들고  사용자정보 넣었으므로
+==> DB에 시큐리티에 참고될 사용자정보와 권한정보가 들어가있으면
+    1) applicationContext.xml에 id="dataSource"로 빈등록 해두고
+    2) security-context.xml에서
+       <security:jdbc-user-service data-source-ref="dataSource"/> 지정하면
+    테스트) DB에 저장된 사용자정보를 입력해서 로그인하면  ( /customLogin 에서 로그인 )
+    결과) 스프링 시큐리티가, 알아서 쿼리 실행해서 DB에서 사용자정보를 조회해옴 ===> 이걸 log로 확인할 수 있음
+    추가) 아직 PasswordEncoder없어서 (비밀번호가 평문이라서) 500에러 나오는게 정상
+        java.lang.IllegalArgumentException: There is no PasswordEncoder mapped for the id "null"
+
+이제 PasswordEncoder넣을껀데,
+내가 mapper작성한적 없는데
+스프링시큐리티가 이 쿼리를 알아서 실행해서 사용자정보를 조회하고 권한까지 조회해서 로그인시켜준다는게 포인트임
+
+
+==========================================================================로그에 나옴
+INFO : jdbc.audit - 1. Connection.isValid(5) returned true
+INFO : jdbc.audit - 1. PreparedStatement.new PreparedStatement returned
+INFO : jdbc.audit - 1. Connection.prepareStatement(select username,password,enabled from users where username = ?) returned net.sf.log4jdbc.sql.jdbcapi.PreparedStatementSpy@5ec3640f
+INFO : jdbc.audit - 1. PreparedStatement.setString(1, "ADMIN00") returned
+INFO : jdbc.sqlonly - select username,password,enabled from users where username = 'ADMIN00'
+
+INFO : jdbc.sqltiming - select username,password,enabled from users where username = 'ADMIN00'
+ {executed in 6 msec}
+INFO : jdbc.resultset - 1. ResultSet.new ResultSet returned
+INFO : jdbc.audit - 1. PreparedStatement.executeQuery() returned net.sf.log4jdbc.sql.jdbcapi.ResultSetSpy@37aab3be
+INFO : jdbc.resultset - 1. ResultSet.next() returned true
+INFO : jdbc.resultset - 1. ResultSet.getString(1) returned ADMIN00
+INFO : jdbc.resultset - 1. ResultSet.getString(2) returned PW00
+INFO : jdbc.resultset - 1. ResultSet.getBoolean(3) returned true
+INFO : jdbc.resultsettable -
+|---------|---------|--------|
+|username |password |enabled |
+|---------|---------|--------|
+|ADMIN00  |PW00     |true    |
+|---------|---------|--------|
+
+INFO : jdbc.resultset - 1. ResultSet.next() returned false
+INFO : jdbc.resultset - 1. ResultSet.close() returned void
+INFO : jdbc.audit - 1. PreparedStatement.close() returned
+INFO : jdbc.audit - 1. Connection.clearWarnings() returned
+INFO : jdbc.audit - 1. PreparedStatement.new PreparedStatement returned
+INFO : jdbc.audit - 1. Connection.prepareStatement(select username,authority from authorities where username = ?) returned net.sf.log4jdbc.sql.jdbcapi.PreparedStatementSpy@4ce1f7f9
+INFO : jdbc.audit - 1. PreparedStatement.setString(1, "ADMIN00") returned
+INFO : jdbc.sqlonly - select username,authority from authorities where username = 'ADMIN00'
+
+INFO : jdbc.sqltiming - select username,authority from authorities where username = 'ADMIN00'
+ {executed in 8 msec}
+INFO : jdbc.resultset - 1. ResultSet.new ResultSet returned
+INFO : jdbc.audit - 1. PreparedStatement.executeQuery() returned net.sf.log4jdbc.sql.jdbcapi.ResultSetSpy@7dec8f6a
+INFO : jdbc.resultset - 1. ResultSet.next() returned true
+INFO : jdbc.resultset - 1. ResultSet.getString(2) returned ROLE_ADMIN
+INFO : jdbc.resultset - 1. ResultSet.next() returned true
+INFO : jdbc.resultset - 1. ResultSet.getString(2) returned ROLE_MANAGER
+INFO : jdbc.resultsettable -
+|---------|-------------|
+|username |authority    |
+|---------|-------------|
+|[unread] |ROLE_ADMIN   |
+|[unread] |ROLE_MANAGER |
+|---------|-------------|
+
+==========================================================================로그에 나옴, 그리고 이 밑에 에러나옴(p.647)
+
+
+
+이제 PasswordEncoder넣을껀데,
+내가 mapper작성한적 없는데
+스프링시큐리티가 이 쿼리를 알아서 실행해서 사용자정보를 조회하고 권한까지 조회해서 로그인시켜준다는게 포인트임

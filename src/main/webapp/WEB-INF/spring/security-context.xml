@@ -64,18 +64,23 @@
 
     <security:authentication-manager>
         <security:authentication-provider>
+            <security:jdbc-user-service data-source-ref="dataSource"/>
+<!--dataSource로 user정보를 가져온다.(p.647)
+[1] 내가 멍청하게 users 테이블에 insert할 때 대문자로 써서 ㅋㅋㅋㅋ계정정보가 대문자로 들어가짐
+[2] 아직 PasswordEncoder없어서 (비밀번호가 평문이라서) 500에러 나오는게 정상
+java.lang.IllegalArgumentException: There is no PasswordEncoder mapped for the id "null"
+-->
+
+<!--이건 DB없이 그냥 InMemoryUserDatailsmanager이용해서 테스트 했던것, jdbc_Login_note.txt참고할 것
+
             <security:user-service>
                 <security:user name="member"  password="{noop}member" authorities="ROLE_MEMBER"/>
-                                                                <!-- ROLE_MEMBER 라는 권한을 가진 member라는 계정-->
-
                 <security:user name="admin"  password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
-                                                                    <!-- MEMBER와 ADMIN : 2가지 권한 설정 - /sample/member와 /sample/admin 둘다 접근가능
-                                                                         만약 member계정인 사용자가 /admin에 접근하려고 하면 403(Forbidden:금지됨, 서버가 요청을 이해했으나 승인을 거부합니다.) 메세지 보게됨
-                                                                         DEBUG: org.springframework.security.web.access.ExceptionTranslationFilter - Access is denied (user is not anonymous); delegating to AccessDeniedHandler
-                                                                         org.springframework.security.access.AccessDeniedException: Access is denied
-
-                                                                          -->
             </security:user-service>
+-->
         </security:authentication-provider>
     </security:authentication-manager>
+
+
+
 </beans>

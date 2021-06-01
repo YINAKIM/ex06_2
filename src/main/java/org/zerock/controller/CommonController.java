@@ -23,7 +23,7 @@ public class CommonController {
 
     @GetMapping("/customLogin")
     public void loginInput(String error, String logout, Model model){
-        log.info("커스텀 로그인 중.......error메세지 : "+error);
+        log.error("커스텀 로그인 중.......error메세지 : "+error);
         log.info("커스텀 로그인 중.......logout메세지 : "+logout);
 
         if(error != null){

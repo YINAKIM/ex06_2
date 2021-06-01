@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
@@ -54,10 +55,10 @@ hidden으로 ${_csrf.parameterName}으로 처리, 브라우저에서는 '_csrf'�
 value값은 임의로 생성된 csrf토큰값 지정된다.
 --%>
     <div>
-        <input type='text' name='username' value='admin'>
+        <input type='text' name='username' value=''>
     </div>
     <div>
-        <input type='password' name='password' value='admin'>
+        <input type='password' name='password' value=''>
     </div>
     <div>
         <div>
