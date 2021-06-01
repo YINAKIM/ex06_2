@@ -26,6 +26,7 @@
         SELECT
              MEM.USERID
             ,USERPW
+            ,USERNAME
             ,ENABLED
             ,REGDATE
             ,UPDATEDATE
