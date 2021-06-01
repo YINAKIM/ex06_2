@@ -31,8 +31,8 @@ public class MemberTests {
 
 
     @Setter(onMethod_ = @Autowired)
-    private DataSource ds;
-  //  private HikariDataSource hikariDataSources;
+    private DataSource ds; //---> 이거 되나 보려고 새로 주입받아 테스트 : 됨
+  //  private HikariDataSource hikariDataSources; //---> 이걸로 100개 성공
 
     // 히카리 없애고 기본 dataSource로 테스트
     @Test

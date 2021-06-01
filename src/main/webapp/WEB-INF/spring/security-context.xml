@@ -58,7 +58,12 @@
 
     <security:authentication-manager>
         <security:authentication-provider>
-           <security:jdbc-user-service data-source-ref="dataSource" />
+<!--DB에서 사용자정보 조회하는 user-service , 스프링시큐리티 포맷 말고 기존 DB를 사용할 경우 : users-by-username-query, authorities-by-username-query 속성을 추가해서 쿼리에서 alias로 스프링시큐리티가 인식할 수 있는 이름(지정된DDL의 컬럼명)으로 바꿔줘야함 -->
+            <security:jdbc-user-service data-source-ref="dataSource"
+           users-by-username-query="SELECT USERID USERNAME, USERPW PASSWORD, ENABLED FROM TBL_MEMBER WHERE USERID= ? "
+                                       authorities-by-username-query="SELECT USERID USERID, AUTH FROM TBL_MEMBER_AUTH WHERE USERID= ? "
+           />
+
             <security:password-encoder ref="bcryptPasswordEncoder"/>
       </security:authentication-provider>
     </security:authentication-manager>
