@@ -1,0 +1,76 @@
+POST방식으로 처리하는 로그아웃은 원래 스프링시큐리티 내부에서 동작하는데,
+* 만약 로그아웃 후에 추가적인 작업이 필요하다면
+* implements LogoutSuccessHandler 로 구현체 만들어서 작업하면됨
+
+CustomLogoutSuccessHandler.java
+* 이건그냥 내가 해볼라고 만든거 ===> 1. security-context.xml에 bean으로 등록함
+*                            2. <security:http> 안에서 ref로 설정 : success-handler-ref="customLogoutSuccess"
+
+--------------------------------
+
+1. jsp에서 인텔리가 보여주는 자동완성에서
+[1] Controller의 /customLogout과
+[2] (SpringSecurity)의 /customLogout이 보임
+
+아마 security-context.xml에서
+[1]는 내가 만든 로그아웃핸들러 인거같텟
+        <!--내가만든 로그아웃 핸들러 ref추가한 로그아웃핸들러-->
+       <security:logout logout-url="/customLogout" invalidate-session="true" success-handler-ref="customLogoutSuccess"/>
+
+[2]는 스프링시큐리티가 해주는 기본 로그아웃핸들러 인거같고
+        <!--  로그아웃 핸들러 등록 -->
+      <security:logout logout-url="/springLogout" invalidate-session="true"/>
+
+--------------------------------
+
+
+ 테스트1) 기본시큐리티만 켰을 때 : 당연히 원래대로 기본시큐리티로 동작함
+ 테스트2) 둘다켰을 때 ("/customLogout")이라고 이름 똑같이 지정했을 때 : 스프링 기본시큐리티로 로그아웃핸들러가 돌아감 (로그로 확인함)
+ 테스트3) custom만 켰을 때 : 내가만든 CustomLogoutSuccessHandler(LogoutSuccessHandler의 구현체)에 있는 onLogoutSuccess타고 로그아웃됨
+
+ 걍궁금해서
+ 테스트4) 이름을 각각 다르게 지정하고, 컨트롤러에 핸들러하나 추가하고,로그아웃페이지도고새로 하나 더 만들어서 둘다켜고 테스트
+ : 둘다 들어갔었는데 둘다 켜져있고, 핸들러가 있고 , jsp페이지가 따로 있으니까 URL에 각각 들어간건데도,
+
+     *** customLogout은 ***
+     WARN : org.springframework.web.servlet.PageNotFound - Request method 'POST' not supported
+     뜨면서 로그아웃처리가 안되고, 기본로그아웃 핸들러가 작동함 => 결국 우선순위가 쩰 높은거같음
+      (=> 내부적으로는 자동으로 로그인페이지를 호출하게 된다는 것이 스프링 시큐리티의 기본설정이라고함)
+=========================================================================================================
+    [+] 기본핸들러를 끄고 http://localhost:8001/customLogout 으로 테스트 :
+    INFO : org.zerock.security.CustomLogoutSuccessHandler - -------onLogoutSuccess--------
+    INFO : org.zerock.security.CustomLogoutSuccessHandler - CustomLogoutSuccessHandler돌아가는지 확인
+    INFO : org.zerock.security.CustomLogoutSuccessHandler - -------onLogoutSuccess--------
+
+    이렇게 내가 만든 로그아웃 핸들러 타고 잘 처리됨 (둘다 켜둘경우에는 404뜨고, POST로 못받는다는 에러메세지 떴었음)
+=========================================================================================================
+    *** springLogout은 ***
+    http://localhost:8001/springLogout 으로 들어가서 로그아웃 누르면
+    ---> springLouout.jsp 에서 POST방식으로 보내는 form(_csrf토큰값가지고 보내지는폼)
+    ---> Controller에서 @GetMappin으로 받는 springLogoutGET핸들러 탐
+    ---> security-context.xml에서 설정한 로그아웃 핸들러가 처리
+         <security:logout logout-url="/springLogout" invalidate-session="true"/>
+
+ 근데 토큰값 확인해봤는데 [어차피 csrf토큰은 세션을통해 보관하므로] 뭘로 로그인하던 토큰값은 똑같음
+
+                Q. 커스텀핸들러를 사용하던, 스프링핸들러를 사용하던 로그아웃처리할 때
+                View요청> jsp에서는 <form ... method="post">로 폼안에 csrf토큰을 hidden으로 보내고
+                Controller핸들러> @GetMapping 으로 받는건
+                왜...?
+                이게 CSRF공격을 막기 위한 시큐리티 내부적인 동작인건가?
+
+                로그아웃 누르면
+============== 로그아웃 버튼 누르면 --(logout-url="/springLogout" 로 리다이렉트(브라우저 네트워크에 302) 되었다가 )--바로 로그인페이지로 감 ==============
+                1. 로그아웃페이지 먼저 보여주고
+                2. [로그아웃페이지에서 csrf토큰값을 폼으로 post submit하는] 버튼을 누르면
+                3. 그 때 토큰값 받아서 컨트롤러의 핸들러에서 @GetMapping 으로 처리..
+                4. 로그아웃 처리 후  -> 자동으로 로그인페이지로 보내주는게 스프링시큐리티의 기본설정
+                                 -> 다른 작업을 넣어야되거나, 로그인말고 다른페이지로 보내려면 customHandler작성해서 쓰면된다
+                는 건데,
+
+
+        <!-- CSRF 토큰 활성화 : false가 기본값 (방어O)
+         : 방어X (false하면 토큰값받아서 확인절차로 방어한다는 뜻) -->
+
+    [1] true로 설정 : 방어 안함 (서버에서 토큰값 받아서 확인 안한다)
+    [2] disabled="false"로 설정 : 방어함 (서버에서 토큰값 받아서 확인한다)

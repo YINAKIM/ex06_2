@@ -13,7 +13,15 @@
     <!-- 권한 별 로그인 후처리 해주는 CustomLoginSuccessHandler 를 빈으로 등록 -->
     <bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
 
-
+    <!--
+    * POST방식으로 처리하는 로그아웃은 원래 스프링시큐리티 내부에서 동작하는데,
+    * 만약 로그아웃 후에 추가적인 작업이 필요하다면
+    * implements LogoutSuccessHandler 로 구현체 만들어서 작업하면됨
+    * 이건그냥 내가 해볼라고 만든거,
+    ==> 근데 테스트 해봤는데 success-handler-ref="customLogoutSuccess" 이거 쓰려면 기본 로그아웃을 꺼야됨
+    기본로그아웃이 우선임
+    -->
+  <bean id="customLogoutSuccess" class="org.zerock.security.CustomLogoutSuccessHandler"/>
 
     <security:http auto-config="true" use-expressions="true">
         <!-- security:intercept-url => 특정 URI접근시 인터셉터를 이용하여 접근제한
@@ -36,13 +44,20 @@
 
         <!-- 접근제한 핸들러 -->
         <security:access-denied-handler ref="customAccessDenied"/>
-<!--        <security:access-denied-handler error-page="/accessError"/> : error-page, ref 둘중하나만 사용-->
+    <!--<security:access-denied-handler error-page="/accessError"/> : error-page, ref 둘중하나만 사용-->
 
-        <!-- CSRF 토큰 활성화 : true가 기본값  -->
-<!--        <security:csrf disabled="true"/>-->
+        <!-- CSRF 토큰 활성화 : false가  기본값
+                           : 방어O (false하면 토큰값받아서 확인절차로 방어한다는 뜻)
 
-<!--        -->
+                           / true하면 방어 X 다들어와 -->
+<!--    <security:csrf disabled="true"/>-->
 
+
+        <!--  로그아웃 핸들러 등록 -->
+  <security:logout logout-url="/springLogout" invalidate-session="true"/>
+
+        <!--내가만든 로그아웃 핸들러 ref추가한 로그아웃핸들러-->
+<!--       <security:logout logout-url="/customLogout" invalidate-session="true" success-handler-ref="customLogoutSuccess"/>-->
     </security:http>
 
 

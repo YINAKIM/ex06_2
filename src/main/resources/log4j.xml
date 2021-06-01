@@ -12,7 +12,7 @@
 
     <!-- Application Loggers -->
     <logger name="Controller">
-        <level value="debug"/>
+        <level value="info"/>
     </logger>
 
     <!-- 3rd-party Loggers (외부dependency) -->
@@ -35,7 +35,7 @@
 
     <!-- Root Logger -->
     <root>
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="console"/>
     </root>
 

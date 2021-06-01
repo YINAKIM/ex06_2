@@ -36,4 +36,14 @@ public class CommonController {
 
     }
 
+    @GetMapping("/customLogout")
+    public void logoutGET(){
+        log.info("custom LOGOUT");
+    }
+
+    @GetMapping("/springLogout")
+    public void springLogoutGET(){
+        log.info("springLogout!!!");
+    }
+
 }
