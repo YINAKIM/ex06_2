@@ -1,8 +1,9 @@
-package org.zerock.domain;
+package org.zerock.security.domain;
 
 import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.zerock.domain.MemberVO;
 
 import java.util.stream.Collectors;
 

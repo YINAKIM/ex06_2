@@ -14,18 +14,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-
-    <!--  properties 추가한내용
-    자바버전, 스프링버전, AOP를위한 aspectj버전, 로그용slf4j버전-->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <java-version>1.8</java-version>
     <org.springframework-version>5.0.7.RELEASE</org.springframework-version>
-
-<!-- part5 AOP
-  버전 변경 :  aspectj-version 1.9.0
-  버전 변경 :  slf4j-version 1.7.25
-  -->
     <org.aspectj-version>1.9.0</org.aspectj-version>
     <org.slf4j-version>1.7.25</org.slf4j-version>
 
@@ -61,21 +53,21 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>5.3.7</version>
+      <version>5.0.7.RELEASE</version>
     </dependency>
 
     <!--  jdbc  -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>5.2.0.RELEASE</version>
+      <version>5.0.7.RELEASE</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>5.2.0.RELEASE</version>
+      <version>5.0.7.RELEASE</version>
     </dependency>
 
 
@@ -217,39 +209,56 @@
       <version>1.16</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${org.slf4j-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${org.slf4j-version}</version>
 
-
-    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.8.0-beta0</version>
+      <version>${org.slf4j-version}</version>
+
     </dependency>
 
-    <!-- 콘솔에 쿼리출력하기 - pom.xml
-    https://blog.naver.com/rladlskdlsk/222330268194
-     <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <version>2.0.1</version>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <version>2.0.1</version>
-        </dependency>
-        <dependency>
-          <groupId>org.lazyluke</groupId>
-          <artifactId>log4jdbc-remix</artifactId>
-          <version>0.2.7</version>
-        </dependency>
--->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.jms</groupId>
+          <artifactId>jms</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jdmk</groupId>
+          <artifactId>jmxtools</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jmx</groupId>
+          <artifactId>jmxri</artifactId>
+        </exclusion>
+      </exclusions>
+
+    </dependency>
+
+    <!-- @Inject -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
 
     <!--   JSON 데이터 만들기   -->
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->

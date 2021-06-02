@@ -30,7 +30,7 @@
 
 <%--
 실행결과
-principal(jsp에서 principal) : org.zerock.domain.CustomUser@bc1272a6: Username: admin90; Password: [PROTECTED]; Enabled: true; AccountNonExpired: true; credentialsNonExpired: true; AccountNonLocked: true; Granted Authorities: ROLE_ADMIN
+principal(jsp에서 principal) : org.zerock.security.domain.CustomUser@bc1272a6: Username: admin90; Password: [PROTECTED]; Enabled: true; AccountNonExpired: true; credentialsNonExpired: true; AccountNonLocked: true; Granted Authorities: ROLE_ADMIN
 MemberVO(jsp에서 principal.member) : MemberVO(userid=admin90, userpw=$2a$10$1hX3MnLTP2GHHgX.Hwlr/u81S3AGLm61tVbTBHwUbJ/PMA2N9lk36, userName=관리자90, enabled=false, regDate=Tue Jun 01 11:29:08 KST 2021, updateDate=Tue Jun 01 11:29:08 KST 2021, authList=[AuthVO(userid=admin90, auth=ROLE_ADMIN)])
 사용자 이름(jsp에서 principal.member.userName) : 관리자90
 사용자 ID(jsp에서 principal.username) : admin90
