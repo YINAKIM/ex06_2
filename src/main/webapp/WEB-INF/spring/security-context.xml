@@ -49,11 +49,20 @@
     <!--<security:csrf disabled="true"/>-->
 
 
-        <!--  로그아웃 핸들러 등록 -->
-        <security:logout logout-url="/springLogout" invalidate-session="true"/>
+        <!--  로그아웃 핸들러 등록 -->                                             <!-- 자동로그인할 때 생성된 쿠키 로그아웃할 때 삭제 -->
+        <security:logout logout-url="/springLogout" invalidate-session="true" delete-cookies="remember-me,JSESSION_ID"/>
 
         <!--내가만든 로그아웃 핸들러 ref추가한 로그아웃핸들러-->
     <!-- <security:logout logout-url="/customLogout" invalidate-session="true" success-handler-ref="customLogoutSuccess"/>-->
+
+        <!-- 자동로그인을 위한 remember-me : 브라우저 쿠키에 저장하는 방법 -->
+        <security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+            <!--
+            이거 설정하고 로그인할 때 RememberMe 체크하고 로그인 ===> 브라우저 DevTool Application탭 보면
+            remember-me  	NVFrT0RtQUtSMzVoWEoxWkZPczJKdyUzRCUzRDpSV3R4SHFSdjMlMkJsbSUyQmVyZmdrczU1USUzRCUzRA	 localhost	/	2021-06-09T08:26:31.359Z	93
+            cookie값이 생긴다
+            -->
+
     </security:http>
 
 

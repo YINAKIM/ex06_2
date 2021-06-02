@@ -62,6 +62,7 @@ value값은 임의로 생성된 csrf토큰값 지정된다.
     </div>
     <div>
         <div>
+                                   <%-- 자동로그인하기 위한 사용자정보를 DB에 저장하게 하는 name='remember-me' --%>
             <input type='checkbox' name='remember-me'> Remember Me
         </div>
 

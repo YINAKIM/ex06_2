@@ -91,6 +91,7 @@
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:5.0.7.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:5.0.7.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:5.0.7.RELEASE" />
+          <element id="library" level="project" name="ojdbc8" />
         </element>
       </element>
       <element id="directory" name="META-INF">
