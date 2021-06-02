@@ -125,9 +125,6 @@ public class BoardController {
         */
 
 
-
-
-
     // 번호로 조회페이지
     @GetMapping({"/get","/modify"})
     public void get(@RequestParam("bno")Long bno, Model model,
