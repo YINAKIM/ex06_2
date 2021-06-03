@@ -37,9 +37,10 @@ public class SampleController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MEMBER')")
     @GetMapping("/annoMember")
-    public void doMember2() {
+    public String doMember2() {
 
-        log.debug("......................logined annotation member");
+        log.info("......................logined annotation member");
+        return "all";
     }
 
 
@@ -47,7 +48,7 @@ public class SampleController {
     @GetMapping("/annoAdmin")
     public void doAdmin2() {
 
-        log.debug("......................admin annotaion only");
+        log.info("......................admin annotaion only");
     }
 
 

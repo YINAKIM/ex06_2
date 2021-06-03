@@ -39,7 +39,9 @@
 
         <!-- 로그인페이지 -->
         <!-- 로그인 성공 후처리 핸들러 : 권한 별로 지정한 페이지로 redirect해줌 -->
-        <security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+<!--  컨트롤러에서 어노테이션으로 -->
+
+      <security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
 
         <!-- 접근제한 핸들러 -->
         <security:access-denied-handler ref="customAccessDenied"/>
