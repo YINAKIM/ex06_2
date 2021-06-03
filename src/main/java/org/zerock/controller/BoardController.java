@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -64,13 +65,16 @@ public class BoardController {
 
     //등록작업을 위해 입력받을 화면을 보여주는건 GET
     @GetMapping("/register")
+    @PreAuthorize("isAuthenticated()")
     public void register() {
-
+        // @PreAuthorize체크했음, 통과해야만 register페이지 접근할 수 있음
+        // isAuthenticated() : 어떤 사용자든 로그인 성공해야만 이 기능을 사용할 수 있다
     }
 
 
     // 등록 작업은 POST
     @PostMapping("/register")
+    @PreAuthorize("isAuthenticated()")
     public String register(BoardVO board, RedirectAttributes rttr){
 
         log.info("============== 일단 확인만 ===============");

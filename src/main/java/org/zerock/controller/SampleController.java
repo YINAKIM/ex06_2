@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SampleController {
 
     /****************************** 시큐리티 ******************************/
-    /*
+
     @GetMapping("/all")
     public void doAll(){
         log.info("do /////all///// can access everybody");
@@ -32,7 +32,7 @@ public class SampleController {
 
     }
 
-     */
+
     /****************************** 시큐리티 ******************************/
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MEMBER')")

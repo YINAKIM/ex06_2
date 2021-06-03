@@ -1,0 +1,113 @@
+JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
+
+1. JSTL이나 시큐리티 태그를 사용할 수 있도록 taglib선언
+2. CSS, JS 파일의 링크를 절대경로로 수정 : ../vendor >>> /resources/vendor
+[가장중요!]----- 3. <form> 태그 내의 <input>태그들의 name속성들 시큐리티에 맞게 수정
+[가장중요!]----- 4. CSRF토큰 hidden으로 보내는 항목 추가
+5. JavaScript를 통한 로그인전송
+
+======================================================================
+
+BoardController에서  @PreAuthorize("isAuthenticated()") 를 통과(로그인성공)하면
+
+register.jsp에서
+[1] 사용자의 ID를 readOnly로 넣어주고,
+[2] form 에 있는 name=""를 시큐리티에 정해진 name으로 넣고 : username(이게 사용자ID임), password, remember-me 등등
+[3] method="post"로 form 전송 시, csrf토큰값을 꼭 hindden으로 같이 보내도록 넣는다
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+********************************** user30 pw30 으로 테스트 : ROLE_USER
+
+/register는 접근되고, 로그인 후처리가
+authentication-success-handler-ref="customLoginSuccess" 를 없애놔서
+일단 AccessDenied로 가는데 일단 로그는 참고용으로 넣어둠
+ AccessDenied > CommonController 에서 /accessError > log.info("access denied : "+auth);
+ 여기 나오는 auth임 찍으면 스프링 시큐리티에서 알아서 체크하는게 뭐뭐인지 참고용으로 남겨둠
+
+ERROR: org.zerock.security.CustomAccessDeniedHandler - 커스텀 Access Denied Handler
+ERROR: org.zerock.security.CustomAccessDeniedHandler - Redirect.........................
+
+INFO : org.zerock.controller.CommonController - access denied
+: org.springframework.security.authentication.UsernamePasswordAuthenticationToken@75c8b060:
+ Principal: org.zerock.security.domain.CustomUser@ce2b2b68:
+ Username: user30;
+ Password: [PROTECTED];
+ Enabled: true;
+ AccountNonExpired: true;
+ credentialsNonExpired: true;
+ AccountNonLocked: true;
+ Granted Authorities: ROLE_USER;
+ Credentials: [PROTECTED];
+ Authenticated: true;
+
+ Details:
+ org.springframework.security.web.authentication.WebAuthenticationDetails@fffe9938:
+ RemoteIpAddress: 0:0:0:0:0:0:0:1;
+ SessionId: 4310997C335B192F1B7D3B0CD8077B8D;
+ Granted Authorities: ROLE_USER
+
+********************************** user30 pw30 으로 테스트 : ROLE_USER
+테스트1) 로그인 안하고 register.jsp 접근시도
+1-1) 접근 안되서 /customLogin페이지로 넘어가는지 확인
+     : 현재 security-context.xml에 로그인 후처리 핸들러로 등록해둔 페이지
+      <security:form-login login-page="/customLogin"/>
+
+
+테스트2) 로그인 하고 register.jsp접근시도,
+2-1) 접근 되는지? 됨
+2-2) 그리고 사용자 정보 DB에서 읽어와서 log에 찍히는지? 찍힘
+
+테스트3) register.jsp에접근 이후 보여줄 것
+3-1) 작성자input(writer)에 로그인한 사용자 ID가 세팅되는지? user30이라고 찍힘
+3-2) readOnly되서 사용자가 수정할 수 없는지? readOnly 되어있음
+3-3) 브라우저 페이지소스보기 했을 때 csrf토큰값이 들어있는지 (이게 전송되어야만 csrf공경 방어를 위한 토큰값 비교 가능) : OK
+<input type="hidden" name="_csrf" value="fecc0ebe-1256-4a04-9fcb-0c321c374c01"/>
+
+[+]근데 개발자도구에서
+JSESSIONID는 톰캣이 주는 세션 ID인데, 이건 뭐지?
+__cfduid	dab4cfe9b9efcd590783980801534a2901620404533
+???
+
+( *** 아직 파일첨부는 Ajax로 처리따로 해야되니까 놔두고)
+
+테스트4) 글등록 되는지 확인
+4-1) 로그인한 사용자로 글이 등록되는지 : OK 정상 등록됨
+
+테스트5) 글 등록 후 한글 깨지는지 : 시큐리티 이용할 때 web.xml에서 CharacterEncodingFilter 순서 주의
+깨짐) ROLE_USER로 글등록 테스트 > ROLE_USER ê¸ë±ë¡ íì¤í¸... 대충이런신ㅇ르로 나옴
+해결) web.xml에 필터순서 변경, url-pattern 맞춤
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+
+user30이 작성한 글 bno
+426018
+426019
+426020
+
+admin90이 작성한 글 bno
+426021
+
+

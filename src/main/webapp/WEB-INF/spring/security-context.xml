@@ -11,7 +11,7 @@
     <bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"/>
 
     <!-- 권한 별 로그인 후처리 해주는 CustomLoginSuccessHandler 를 빈으로 등록 -->
-    <bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>
+<!--    <bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"/>-->
 
     <!-- 기본은 로그인페이지로 보내는 기본 로그아웃핸들러 쓰면되고, 필요시 customLogoutSuccessHandler 사용-->
     <bean id="customLogoutSuccess" class="org.zerock.security.CustomLogoutSuccessHandler"/>
@@ -39,9 +39,8 @@
 
         <!-- 로그인페이지 -->
         <!-- 로그인 성공 후처리 핸들러 : 권한 별로 지정한 페이지로 redirect해줌 -->
-<!--  컨트롤러에서 어노테이션으로 -->
-
-      <security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+        <security:form-login login-page="/customLogin"/>
+                                <!-- authentication-success-handler-ref="customLoginSuccess"-->
 
         <!-- 접근제한 핸들러 -->
         <security:access-denied-handler ref="customAccessDenied"/>

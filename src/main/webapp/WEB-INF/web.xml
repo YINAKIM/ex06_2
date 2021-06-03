@@ -49,28 +49,32 @@
 
 
 
-    <!--  한글인코딩필터  -->
+    <!--  한글인코딩필터  : 시큐리티보다 위에 선언되어있어야 한글이 안깨진다
+    필터 순서
+    1. 인코딩필터
+    2. 스프링시큐리티 필터
+    -->
+
     <filter>
-        <filter-name>encoding</filter-name>
+        <filter-name>encodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>encoding</filter-name>
-        <servlet-name>appServlet</servlet-name>
     </filter-mapping>
 </web-app>

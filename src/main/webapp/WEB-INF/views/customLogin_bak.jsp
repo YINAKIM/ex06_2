@@ -8,12 +8,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
     <title>Title</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Bootstrap Admin Theme</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -33,11 +40,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-
 </head>
-<body>
-
 
 <%--
 JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
@@ -49,6 +52,7 @@ JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
 5. JavaScript를 통한 로그인전송
 --%>
 
+
 <body>
 <div class="container">
     <div class="row">
@@ -58,10 +62,10 @@ JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
                     <h3 class="panel-title">로그인 해주세요</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="/login" method="post">
+                    <form role="form">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" placeholder="ID" name="username" type="text" autofocus>
+                                <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" placeholder="Password" name="password" type="password" value="">
@@ -74,9 +78,6 @@ JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
                             <!-- Change this to a button or input when using this as a form -->
                             <a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>
                         </fieldset>
-
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-
                     </form>
                 </div>
             </div>
@@ -95,14 +96,5 @@ JSP페이지에서 시큐리티 적용할 때 신경써야 할 부분
 
 <!-- Custom Theme JavaScript -->
 <script src="/resources/dist/js/sb-admin-2.js"></script>
-<script type="text/javascript">
-    $(".btn-success").on("click",function(e){
-       e.preventDefault();
-       $("form").submit();
-    });
-
-
-</script>
-
 </body>
 </html>

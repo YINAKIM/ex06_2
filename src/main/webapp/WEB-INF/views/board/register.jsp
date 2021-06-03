@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@include file="../includes/header.jsp"%>
 <style type="text/css">
@@ -298,7 +299,11 @@
 
               <div class="form-group">
                 <label>WRITER</label>
-                <input class="form-control" name="writer">
+
+                <%-- 작성자 : BoardController에서  @PreAuthorize("isAuthenticated()") 를 통과(로그인성공)한 사용자의 ID--%>
+                <input class="form-control" name="writer"
+                       value="<sec:authentication property='principal.username'/>"
+                       readonly="readonly">
               </div>
 
               <button type="submit" class="btn btn-default">Submit</button>
@@ -334,8 +339,10 @@
                 </div>
                 <%--row--%>
 
-
+            <%-- 시큐리티 적용하면 꼭! form을 POST로 보낼 때 _csrf 토큰을 hidden에 담아서 보낸다  --%>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form>
+
 
           </div>
 
