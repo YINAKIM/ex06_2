@@ -64,9 +64,6 @@ MemberTest 돌리려면 이거 살려야함
 
 <!--  base-package : 이 위치에 있는 어노테이션 붙은 객체들 (Bean들) 찾아라 -->
    <mybatis-spring:scan base-package="org.zerock.mapper"/>
-
-
-
     <context:component-scan base-package="org.zerock.service"/>
     <context:component-scan base-package="org.zerock.aop"/>
     <aop:aspectj-autoproxy></aop:aspectj-autoproxy>

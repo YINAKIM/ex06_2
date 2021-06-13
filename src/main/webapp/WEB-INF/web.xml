@@ -7,6 +7,7 @@
 
     <display-name>Archetype Created Web Application</display-name>
 
+    <!-- 어플리케이션 전체 설정파일 + 각 페이지 별 설정파일 -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/spring/applicationContext.xml
@@ -18,7 +19,7 @@
     </listener>
 
 
-    <!-- Processes application requests -->
+    <!-- Processes application requests : Front Controller 등록,  -->
     <servlet>
         <servlet-name>appServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -45,7 +46,10 @@
         <servlet-name>appServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
+<!-- FrontController로 등록된 dispatcher-servlet.xml은
+ url-pattern에 해당되는 요청이 들어오면 어플리케이션 전체에서 일괄적으로 처리할 기능을 구현, 뷰에서 들어온 모든 요청을 대표 컨트롤러가 받아 처리한 후,
+ 실제 컨트롤러(subController: Controller.java)를 실행시킨다.
+ 그래서 dispatcher-servlet.xml에 <componant-scan base-package="controller"/>해서 컨트롤러들이 모여있는 base-packeage를 지정해두는 것이다.-->
 
 
 

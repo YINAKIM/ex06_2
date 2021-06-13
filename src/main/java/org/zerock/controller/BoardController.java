@@ -102,6 +102,8 @@ public class BoardController {
      //   rttr.addFlashAttribute("result2",board.getBno());
         return "redirect:/board/list";
     }
+
+
         /*
             [ 등록작업 (수정작업 포함 POST작업 시) redirect ]
 
