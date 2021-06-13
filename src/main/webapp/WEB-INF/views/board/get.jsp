@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@include file="../includes/header.jsp"%>
 
 
@@ -504,13 +505,24 @@
                                        readonly="readonly"/>
                             </div>
 <hr>
-                        <%-- 버튼 modify : 수정화면으로 이동 --%>
+
+<%--자신이 작성한 글일 경우에만  modify 버튼 활성화 --%>
+
+                <sec:authentication property="principal" var="pinfo"/>
+                <sec:authorize access="isAuthenticated()">
+                    <c:if test="${pinfo.username eq board.writer}">
+                        <%-- 버튼 modify : 수정화면으로 이동 (로그인한 사용자가 작성한 글인 경우에만 modify버튼 활성화)--%>
                             <button data-oper='modify'
                                     class="btn btn-default"
                                     onclick="location.href='/board/modify?bno=<c:out value="${board.bno}"/>'"
                             >Modify</button>
+                    </c:if>
+                </sec:authorize>
 
-                        <%-- 버튼 modify : 수정화면으로 이동 --%>
+
+
+<%--자신이 작성한 글일 경우에만  modify 버튼 활성화 : end --%>
+                        <%-- 버튼 List : 수정화면으로 이동 --%>
                             <button data-oper='list'
                                     class="btn btn-info"
                                     onclick="location.href='/board/list'"
